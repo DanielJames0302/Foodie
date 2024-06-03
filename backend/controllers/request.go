@@ -168,4 +168,70 @@ func CancelFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 }
 
 
-func GetFollowRequest
+func GetFollowRequests (context *fiber.Ctx, db *gorm.DB) error {
+	token := context.Cookies("accessToken")
+	t, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte("JWT_KEY"), nil
+	})
+
+	if err != nil {
+		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "token is not valid"})
+	}
+
+	if !(len(token) > 0) {
+		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
+	}
+
+	claims := t.Claims.(*jwt.StandardClaims)
+
+	userId, err := strconv.Atoi(string(claims.Issuer))
+
+	if (err != nil) {
+		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Issuer not found"})
+	}
+
+	results := []models.FollowRequests{}
+
+	query := db.Raw("SELECT id, sender_profile_id FROM follow_requests WHERE receiver_profile_id = ?", userId).Scan(&results)
+
+	if query.Error != nil {
+		return context.Status(http.StatusInternalServerError).JSON(query.Error)
+	}
+
+	return context.Status(http.StatusOK).JSON(results)
+
+}
+
+
+func GetSendedFollowRequests (context *fiber.Ctx, db *gorm.DB) error {
+	token := context.Cookies("accessToken")
+	t, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte("JWT_KEY"), nil
+	})
+
+	if err != nil {
+		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "token is not valid"})
+	}
+
+	if !(len(token) > 0) {
+		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
+	}
+
+	claims := t.Claims.(*jwt.StandardClaims)
+
+	userId, err := strconv.Atoi(string(claims.Issuer))
+
+	if (err != nil) {
+		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Issuer not found"})
+	}
+
+	results := []models.FollowRequests{}
+
+	query := db.Raw("SELECT id, receiver_profile_id FROM follow_requests WHERE sender_profile_id = ?", userId).Scan(&results)
+
+	if query.Error != nil {
+		return context.Status(http.StatusInternalServerError).JSON(query.Error)
+	}
+
+	return context.Status(http.StatusOK).JSON(results)
+}

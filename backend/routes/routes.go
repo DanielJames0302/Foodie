@@ -69,4 +69,6 @@ func FollowRequestRoutes(db *gorm.DB, app *fiber.App) {
 	api.Post("/send_follow_request/:receiverProfileId", WithDB(controllers.SendFollowRequest, db))
 	api.Post("/accept_follow_request/:senderProfileId", WithDB(controllers.AcceptFollowRequest, db))
 	api.Delete("/cancel_follow_request/:receiverProfileId", WithDB(controllers.CancelFollowRequest, db))
+	api.Get("/follow_requests", WithDB(controllers.GetFollowRequests, db) )
+	api.Get("/sended_follow_requests", WithDB(controllers.GetSendedFollowRequests, db))
 }
