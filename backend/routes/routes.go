@@ -63,3 +63,10 @@ func RelationshipRoutes(db *gorm.DB, app *fiber.App) {
 	api.Get("/relationships", WithDB(controllers.GetRelationships,db))
 	api.Delete("/relationships", WithDB(controllers.DeleteRelationship,db))
 }
+
+func FollowRequestRoutes(db *gorm.DB, app *fiber.App) {
+	api := app.Group("/api")
+	api.Post("/send_follow_request/:receiverProfileId", WithDB(controllers.SendFollowRequest, db))
+	api.Post("/accept_follow_request/:senderProfileId", WithDB(controllers.AcceptFollowRequest, db))
+	api.Delete("/cancel_follow_request/:receiverProfileId", WithDB(controllers.CancelFollowRequest, db))
+}

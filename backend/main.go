@@ -117,12 +117,6 @@ func (r *Repository) GetBookByID(context *fiber.Ctx) error {
 }
 
 func (r *Repository) SetupRoutes(app *fiber.App) {
-/*	api := app.Group("/api")
-	api.Post("/create_books", r.CreateBook)
-	api.Delete("delete_book/:id", r.DeleteBook)
-	api.Get("/get_books/:id", r.GetBookByID)
-	api.Get("/books", r.GetBooks) */
-
 	routes.AuthRoutes(r.DB, app)
 	routes.PostRoutes(r.DB, app)
 	routes.UploadRoutes(r.DB, app)
@@ -130,6 +124,7 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	routes.LikesRoutes(r.DB,app)
 	routes.UserRoutes(r.DB, app)
 	routes.RelationshipRoutes(r.DB, app)
+	routes.FollowRequestRoutes(r.DB, app)
 }
 
 func main() {
