@@ -1,14 +1,14 @@
 package controllers
 
 import (
-
 	"net/http"
-
-	"time"
 	"strconv"
 
+	"time"
 	"github.com/DanielJames0302/Foodie/models"
+	"github.com/DanielJames0302/Foodie/utils"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -23,6 +23,7 @@ type PublicUser struct {
 }
 
 func Login(context *fiber.Ctx, db *gorm.DB) error {
+	sess := context.Locals("session").(*session.Session)
 	loginUser := models.Users{}
 	userModel := &models.Users{}
 
@@ -44,28 +45,37 @@ func Login(context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Wrong password"})
 	}
 
-	expirationTime :=  time.Now().Add(time.Hour * 24)
-	userModel.Password =" "
-	claims := jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-			Issuer: strconv.Itoa(int(userModel.ID)),
-	}
-	
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	var jwtKey = []byte("JWT_KEY")
-	tokenValue, err := token.SignedString(jwtKey)
-	
+	accessToken, err := utils.CreateToken(strconv.Itoa(int(userModel.ID)),"2h")
 	if err != nil {
+		return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to generate access token",
+		})
+	}
+	refreshToken, err := utils.CreateToken(strconv.Itoa(int(userModel.ID)),"168h")
+	if err != nil {
+		
+		context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to generate refresh token",
+		})
 		return err
+	
 	}
 
+
+	sess.Set("accessToken", accessToken)
+	if err := sess.Save(); err != nil {
+		return context.Status(fiber.StatusInternalServerError).JSON(err)
+	}
 	context.Cookie(&fiber.Cookie{
-		Name:     "accessToken",
-		Value:    tokenValue,
-		Expires:  expirationTime,
-		Domain:   "localhost",
-		HTTPOnly: true,
+			Name:     "token",
+			Value:    refreshToken,
+			Expires:  time.Now().Add(7 * 24 * time.Hour),
+			HTTPOnly: true,
+			Secure:   false,
+			Domain:   "localhost",
+			SameSite: "Strict",
 	})
+	
 
 	return context.JSON(userModel)
 }
@@ -101,6 +111,10 @@ func Register(context *fiber.Ctx, db *gorm.DB) error {
 }
 
 func Logout(context *fiber.Ctx) error {
+	sess := context.Locals("session").(*session.Session)
+	if err := sess.Destroy(); err != nil {
+		panic(err)
+	}
 	context.ClearCookie()
 	return context.Status(http.StatusOK).JSON(&fiber.Map{"message": "User has been logged out"})
 }
