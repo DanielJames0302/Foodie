@@ -1,130 +1,36 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 
+	"github.com/DanielJames0302/Foodie/middlewares"
 	"github.com/DanielJames0302/Foodie/models"
+	"github.com/DanielJames0302/Foodie/routes"
 	"github.com/DanielJames0302/Foodie/storage"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
-	"github.com/DanielJames0302/Foodie/routes"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-
 )
-
-type Book struct {
-	Author    string `json:"author"`
-	Title     string `json:"title"`
-	Publisher string `json:"publisher"`
-}
-
+var store = session.New()
 type Repository struct {
 	DB *gorm.DB
 }
 
-func (r *Repository) CreateBook(context *fiber.Ctx) error {
-	book := Book{}
 
-	err := context.BodyParser(&book)
-
-	if err != nil {
-		context.Status(http.StatusUnprocessableEntity).JSON(
-			&fiber.Map{"message": "request failed"})
-		return err
-	}
-
-	err = r.DB.Create(&book).Error
-	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "could not create book"})
-		return err
-	}
-
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "book has been added"})
-	return nil
-}
-
-func (r *Repository) DeleteBook(context *fiber.Ctx) error {
-	bookModel := models.Books{}
-	id := context.Params("id")
-	if id == "" {
-		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{
-			"message": "id cannot be empty",
-		})
-		return nil
-	}
-
-	err := r.DB.Delete(bookModel, id)
-
-	if err.Error != nil {
-		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
-			"message": "could not delete book",
-		})
-		return err.Error
-	}
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "book delete successfully",
-	})
-	return nil
-}
-
-func (r *Repository) GetBooks(context *fiber.Ctx) error {
-	bookModels := &[]models.Books{}
-
-	err := r.DB.Find(bookModels).Error
-	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "could not get books"})
-		return err
-	}
-
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "books fetched successfully",
-		"data":    bookModels,
-	})
-	return nil
-}
-
-func (r *Repository) GetBookByID(context *fiber.Ctx) error {
-
-	id := context.Params("id")
-	bookModel := &models.Books{}
-	if id == "" {
-		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{
-			"message": "id cannot be empty",
-		})
-		return nil
-	}
-
-	fmt.Println("the ID is", id)
-
-	err := r.DB.Where("id = ?", id).First(bookModel).Error
-	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "could not get the book"})
-		return err
-	}
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "book id fetched successfully",
-		"data":    bookModel,
-	})
-	return nil
-}
 
 func (r *Repository) SetupRoutes(app *fiber.App) {
-	routes.AuthRoutes(r.DB, app)
-	routes.PostRoutes(r.DB, app)
-	routes.UploadRoutes(r.DB, app)
-	routes.CommentsRoutes(r.DB, app)
-	routes.LikesRoutes(r.DB,app)
-	routes.UserRoutes(r.DB, app)
-	routes.RelationshipRoutes(r.DB, app)
-	routes.FollowRequestRoutes(r.DB, app)
+	api := app.Group("/api",routes.WithDB(middlewares.IsAuthorized, r.DB))
+	routes.AuthRoutes(r.DB, api)
+	routes.PostRoutes(r.DB, api)
+	routes.UploadRoutes(r.DB, api)
+	routes.CommentsRoutes(r.DB, api)
+	routes.LikesRoutes(r.DB,api)
+	routes.UserRoutes(r.DB, api)
+	routes.RelationshipRoutes(r.DB, api)
+	routes.FollowRequestRoutes(r.DB, api)
 }
 
 func main() {
@@ -150,17 +56,27 @@ func main() {
 	if err != nil {
 		log.Fatal("could not migrate db")
 	}
-
+	
 
 	r := Repository{
 		DB: db,
 	}
+
 	app := fiber.New()
+
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:3000",
 		AllowHeaders: "Origin, Content-Type, Accept",
 		AllowCredentials: true,
 	}))
+	app.Use(func(c *fiber.Ctx) error {
+		sess, err := store.Get(c)
+		if err != nil {
+				return err
+		}
+		c.Locals("session", sess)
+		return c.Next()
+	})
 	r.SetupRoutes(app)
 	app.Static("/images","../client/public/uploads")
 	app.Listen(":8080")
