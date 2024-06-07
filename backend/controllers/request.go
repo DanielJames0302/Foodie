@@ -8,42 +8,23 @@ import (
 
 	"github.com/DanielJames0302/Foodie/models"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt"
 	"gorm.io/gorm"
 )
 
 func SendFollowRequest (context *fiber.Ctx, db *gorm.DB) error {
-	
-	token := context.Cookies("accessToken")
-	t, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("JWT_KEY"), nil
-	})
-
-	if err != nil {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "token is not valid"})
-	}
-
-	if !(len(token) > 0) {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
-	}
-
-	claims := t.Claims.(*jwt.StandardClaims)
-
-	userId, err := strconv.Atoi(string(claims.Issuer))
-
-	if (err != nil) {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Issuer not found"})
-	}
+	userInfoId := context.Locals("userId").(uint)
 
 	result := models.FollowRequests{}
 	
-	receiverProfileId, err := strconv.Atoi(string(context.Params("receiverProfileId")))
+	receiverProfileId := context.Params("receiverProfileId")
+	u64_receiverProfileId, err := strconv.ParseUint(receiverProfileId, 10, 64)
 
-	if (err != nil ) {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Problem with receiverProfileId"})
+	if err != nil {
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Problem with receiver profile id"})
 	}
+	uint_receiverProfileId := uint(u64_receiverProfileId)
 
-	query := db.Model(&models.FollowRequests{}).Select("follow_requests.*").Where("sender_profile_id = ? AND receiver_profile_id = ?", userId, receiverProfileId).First(&result)
+	query := db.Model(&models.FollowRequests{}).Select("follow_requests.*").Where("sender_profile_id = ? AND receiver_profile_id = ?", userInfoId, uint_receiverProfileId).First(&result)
 
 	if query.RowsAffected > 0 {
 		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Request already sent"})
@@ -62,8 +43,8 @@ func SendFollowRequest (context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
 	}
 	followRequest := models.FollowRequests{}
-	followRequest.ReceiverProfileId = receiverProfileId
-	followRequest.SenderProfileId = userId
+	followRequest.ReceiverProfileId = uint_receiverProfileId
+	followRequest.SenderProfileId = userInfoId
 
 	err = db.Create(&followRequest).Error
 
@@ -75,28 +56,7 @@ func SendFollowRequest (context *fiber.Ctx, db *gorm.DB) error {
 }
 
 func AcceptFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
-
-	token := context.Cookies("accessToken")
-	t, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("JWT_KEY"), nil
-	})
-
-	if err != nil {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "token is not valid"})
-	}
-
-	if !(len(token) > 0) {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
-	}
-
-	claims := t.Claims.(*jwt.StandardClaims)
-
-	userId, err := strconv.Atoi(string(claims.Issuer))
-
-	if (err != nil) {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Issuer not found"})
-	}
-
+	userId := context.Locals("userId").(uint)
 
 	senderProfileId, err := strconv.Atoi(string(context.Params("senderProfileId")))
 
@@ -115,7 +75,6 @@ func AcceptFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
 	}
 
-
 	query = db.Exec("DELETE FROM follow_requests as fr WHERE fr.sender_profile_id=? AND fr.receiver_profile_id=?", senderProfileId, userId)
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
@@ -130,28 +89,7 @@ func AcceptFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 
 
 func CancelFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
-	token := context.Cookies("accessToken")
-	t, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("JWT_KEY"), nil
-	})
-
-	if err != nil {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "token is not valid"})
-	}
-
-	if !(len(token) > 0) {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
-	}
-
-	claims := t.Claims.(*jwt.StandardClaims)
-
-	userId, err := strconv.Atoi(string(claims.Issuer))
-
-	if (err != nil) {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Issuer not found"})
-	}
-
-
+	userId := context.Locals("userId").(uint)
 	receiverProfileId, err := strconv.Atoi(string(context.Params("receiverProfileId")))
 
 	if (err != nil) {
@@ -169,30 +107,11 @@ func CancelFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 
 
 func GetFollowRequests (context *fiber.Ctx, db *gorm.DB) error {
-	token := context.Cookies("accessToken")
-	t, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("JWT_KEY"), nil
-	})
-
-	if err != nil {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "token is not valid"})
-	}
-
-	if !(len(token) > 0) {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
-	}
-
-	claims := t.Claims.(*jwt.StandardClaims)
-
-	userId, err := strconv.Atoi(string(claims.Issuer))
-
-	if (err != nil) {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Issuer not found"})
-	}
+	userInfoId := context.Locals("userId").(uint)
 
 	results := []models.FollowRequests{}
 
-	query := db.Raw("SELECT id, sender_profile_id FROM follow_requests WHERE receiver_profile_id = ?", userId).Scan(&results)
+	query := db.Raw("SELECT id, sender_profile_id FROM follow_requests WHERE receiver_profile_id = ?", userInfoId).Scan(&results)
 
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
@@ -204,30 +123,11 @@ func GetFollowRequests (context *fiber.Ctx, db *gorm.DB) error {
 
 
 func GetSendedFollowRequests (context *fiber.Ctx, db *gorm.DB) error {
-	token := context.Cookies("accessToken")
-	t, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("JWT_KEY"), nil
-	})
-
-	if err != nil {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "token is not valid"})
-	}
-
-	if !(len(token) > 0) {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
-	}
-
-	claims := t.Claims.(*jwt.StandardClaims)
-
-	userId, err := strconv.Atoi(string(claims.Issuer))
-
-	if (err != nil) {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Issuer not found"})
-	}
+	userInfoId := context.Locals("userId").(uint)
 
 	results := []models.FollowRequests{}
 
-	query := db.Raw("SELECT id, receiver_profile_id FROM follow_requests WHERE sender_profile_id = ?", userId).Scan(&results)
+	query := db.Raw("SELECT id, receiver_profile_id FROM follow_requests WHERE sender_profile_id = ?", userInfoId).Scan(&results)
 
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)

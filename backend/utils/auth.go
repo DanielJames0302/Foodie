@@ -6,7 +6,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func CreateToken(userId string, expiration string) (string, error) {
+func CreateToken(userId uint, expiration string) (string, error) {
 	expDuration, err := time.ParseDuration(expiration)
 	if err != nil {
 			return "", err

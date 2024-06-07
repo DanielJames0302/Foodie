@@ -24,7 +24,7 @@ func GetRelationships(context *fiber.Ctx, db *gorm.DB) error {
 	id := context.Query("followedUserId")
 
 	err := db.Model(&models.Relationships{}).Select("relationships.follower_user_id").Where("relationships.followed_user_id = ?", id).Find(&results).Error
-	
+
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return context.Status(http.StatusOK).JSON(results)
@@ -43,11 +43,11 @@ func AddRelationship(context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Uanble to parse request body"})
 	}
 
-	if userId, ok := context.Locals("userId").(string); ok {
-		relationshipModel.FollowerUserID, err = strconv.Atoi(userId)
-		if err != nil {
-			return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Problem with user id"})
-		}
+	userId := context.Locals("userId").(uint)
+
+	relationshipModel.FollowerUserID = userId
+	if err != nil {
+		return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Problem with user id"})
 	}
 
 	result := db.Create(&relationshipModel)
@@ -62,18 +62,19 @@ func AddRelationship(context *fiber.Ctx, db *gorm.DB) error {
 func DeleteRelationship(context *fiber.Ctx, db *gorm.DB) error {
 	relationshipModel := models.Relationships{}
 
-	followedUserId, err := strconv.Atoi(string(context.Query("userId")))
+	followedUserId := context.Query("userId")
+	u64_followedUserId, err := strconv.ParseUint(followedUserId, 10, 64)
+
 	if err != nil {
 		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Problem with followed user id"})
 	}
-
-	relationshipModel.FollowedUserID = followedUserId
+	relationshipModel.FollowedUserID = uint(u64_followedUserId)
 	
-	if userId, ok := context.Locals("userId").(string); ok {
-		relationshipModel.FollowerUserID, err = strconv.Atoi(userId)
-		if err != nil {
-			return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Problem with your user id"})
-		}
+	userInfoId := context.Locals("userId").(uint); 
+
+	relationshipModel.FollowerUserID = userInfoId
+	if err != nil {
+		return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Problem with your user id"})
 	}
 
 	query := db.Exec("DELETE FROM relationships WHERE follower_user_id = ? AND followed_user_id = ?", relationshipModel.FollowerUserID, relationshipModel.FollowedUserID)

@@ -2,11 +2,9 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/DanielJames0302/Foodie/models"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt"
 	"gorm.io/gorm"
 )
 
@@ -35,8 +33,6 @@ func GetComments(context *fiber.Ctx, db *gorm.DB) error {
 		Order("comments.created_at").
 		Scan(&results).Error
 
-	
-
 	if err != nil {
 		context.Status(http.StatusNotFound).JSON(&fiber.Map{"message": "Cannot found comments"})
 		return err;
@@ -47,39 +43,23 @@ func GetComments(context *fiber.Ctx, db *gorm.DB) error {
 
 
 func AddComment(context *fiber.Ctx, db *gorm.DB) error {
-	token := context.Cookies("accessToken")
-	t, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func (token *jwt.Token) (interface{}, error ) {
-		return []byte("JWT_KEY"), nil
-	})
-
-	if err != nil {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "token is not valid"})
-	}
-
-	if !(len(token) > 0) {
-		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
-	}
-	
-	claims := t.Claims.(*jwt.StandardClaims)
 
 	commentModel := models.Comments{}
 
-	err = context.BodyParser(&commentModel)
+	err := context.BodyParser(&commentModel)
 
 	if err != nil {
 		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Request failed"})
 	}
-	commentModel.UserID, err = strconv.Atoi(string(claims.Issuer))
 
-	if err != nil {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Problems with issuer"})
-	}
+	userInfoId := context.Locals("userId").(uint)
+
+	commentModel.UserID = userInfoId
 
 	result := db.Create(&commentModel)
 
 	if result.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Cannot create comment"})
-		
 	}
 
 	return context.Status(http.StatusOK).JSON(&fiber.Map{"messge": "Comment has been created succesfully"})
