@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
-
 	"time"
 	"github.com/DanielJames0302/Foodie/models"
 	"github.com/DanielJames0302/Foodie/utils"
@@ -45,13 +43,13 @@ func Login(context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Wrong password"})
 	}
 
-	accessToken, err := utils.CreateToken(strconv.Itoa(int(userModel.ID)),"2h")
+	accessToken, err := utils.CreateToken(userModel.ID,"2h")
 	if err != nil {
 		return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Failed to generate access token",
 		})
 	}
-	refreshToken, err := utils.CreateToken(strconv.Itoa(int(userModel.ID)),"168h")
+	refreshToken, err := utils.CreateToken(userModel.ID,"168h")
 	if err != nil {
 		
 		context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -63,6 +61,7 @@ func Login(context *fiber.Ctx, db *gorm.DB) error {
 
 
 	sess.Set("accessToken", accessToken)
+	sess.Set("username", userModel.Username)
 	if err := sess.Save(); err != nil {
 		return context.Status(fiber.StatusInternalServerError).JSON(err)
 	}

@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"net/http"
+
 	"time"
 
 	"github.com/DanielJames0302/Foodie/models"
@@ -22,7 +23,6 @@ func IsAuthorized(context *fiber.Ctx, db *gorm.DB) error {
 
 	token := context.Cookies("token")
 
-
 	if !(len(token) > 0) && accessToken != nil {
 		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
 	} 
@@ -39,7 +39,7 @@ func IsAuthorized(context *fiber.Ctx, db *gorm.DB) error {
 	exp := int64((*claims)["exp"].(float64))
 
 	if time.Now().Unix() > exp {
-		userID := (*claims)["id"].(string)
+		userID := (*claims)["id"].(uint)
 		accessToken, err := utils.CreateToken(userID, "2h")
 		if err != nil {
 				return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -63,29 +63,34 @@ func IsAuthorized(context *fiber.Ctx, db *gorm.DB) error {
 				Domain:   "localhost",
 				SameSite: "Strict",
 		})
-		context.Locals("userId", (*claims)["id"])
+		context.Locals("userId", userID)
 		return context.Next()
 	}
-	context.Locals("userId", (*claims)["id"])
+	userId := uint((*claims)["id"].(float64))
+	context.Locals("userId", userId)
 	return context.Next()
 
 }
 
 func UserById (context *fiber.Ctx, db *gorm.DB) error {
 	sess := context.Locals("session").(*session.Session)
-	userId := context.Params("userId")
+	param := context.Locals("userId")
 
-	if userId == "" {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Bad request"})
-	}
 
 	username := sess.Get("username")
+
 	result := models.Users{}
-	if username == "" {
-		query := db.Raw("SELECT username FROM users WHERE id = ?", userId).Scan(&result)
+	if username == nil {
+		query := db.Raw("SELECT username FROM users WHERE id = ?", param).Scan(&result)
 		if query.Error != nil {
 			return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "internal server error"})
 		}
+
+		sess.Set("username", result.Username)
+		if err := sess.Save(); err != nil {
+			return context.Status(fiber.StatusInternalServerError).JSON(err)
+		}
+
 		context.Locals("username", result.Username)
 		return context.Next()
 	}

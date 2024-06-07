@@ -3,8 +3,6 @@ package main
 import (
 	"log"
 	"os"
-
-	"github.com/DanielJames0302/Foodie/middlewares"
 	"github.com/DanielJames0302/Foodie/models"
 	"github.com/DanielJames0302/Foodie/routes"
 	"github.com/DanielJames0302/Foodie/storage"
@@ -22,15 +20,15 @@ type Repository struct {
 
 
 func (r *Repository) SetupRoutes(app *fiber.App) {
-	api := app.Group("/api",routes.WithDB(middlewares.IsAuthorized, r.DB))
-	routes.AuthRoutes(r.DB, api)
-	routes.PostRoutes(r.DB, api)
-	routes.UploadRoutes(r.DB, api)
-	routes.CommentsRoutes(r.DB, api)
-	routes.LikesRoutes(r.DB,api)
-	routes.UserRoutes(r.DB, api)
-	routes.RelationshipRoutes(r.DB, api)
-	routes.FollowRequestRoutes(r.DB, api)
+
+	routes.AuthRoutes(r.DB, app)
+	routes.PostRoutes(r.DB, app)
+	routes.UploadRoutes(r.DB, app)
+	routes.CommentsRoutes(r.DB, app)
+	routes.LikesRoutes(r.DB,app)
+	routes.UserRoutes(r.DB, app)
+	routes.RelationshipRoutes(r.DB, app)
+	routes.FollowRequestRoutes(r.DB, app)
 }
 
 func main() {
