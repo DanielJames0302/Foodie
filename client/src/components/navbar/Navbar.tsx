@@ -21,7 +21,7 @@ const Navbar = () => {
     <div className="navbar">
       <div className="left">
         <Link to="/" style={{ textDecoration: "none" }}>
-          <span>Foodie</span>
+          <span className="app-name">Foodie</span>
         </Link>
         <HomeOutlinedIcon />
 

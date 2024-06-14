@@ -5,6 +5,7 @@ import { User } from "../../interfaces/user";
 import SearchIcon from "@mui/icons-material/Search";
 import "./searchProfile.scss";
 import { Dropdown, DropdownItem } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const SearchProfile = () => {
   const searchRef = useRef<HTMLDivElement | null>(null);
@@ -16,10 +17,8 @@ const SearchProfile = () => {
     queryKey: ["searchProfile", searchedProfileUsername],
     queryFn: () => fetchSearchingResults(searchedProfileUsername),
   });
-
+  const hasResults = data && data.length > 0;
   const handleClick = (event: MouseEvent) => {
-    console.log(event.composedPath());
-    console.log(searchRef.current);
     if (
       searchRef.current &&
       !event.composedPath().includes(searchRef.current)
@@ -30,14 +29,12 @@ const SearchProfile = () => {
     setIsShowResult(true);
   };
   useEffect(() => {
-    if (data?.length === 0) return;
     document.body.addEventListener("click", handleClick);
     return () => {
       document.body.removeEventListener("click", handleClick);
     };
   }, []);
-
-  console.log(isShowResult);
+ 
 
   return (
     <div ref={searchRef} className="search">
@@ -51,23 +48,43 @@ const SearchProfile = () => {
         />
       </div>
       <div className="search-results-list">
-        <Dropdown className="w-100" autoClose={"outside"}>
-          <Dropdown.Menu className="w-100 my-1" show={isShowResult}>
-            {searchedProfileUsername === "" ? (
-              <div className="p-2">
-                Type in profile's username
-              </div>
-            ) : data?.length == 0 ? (
-              <div className="p-2">Unable to find profile</div>
-            ) : (
-              data?.map((user: User, id: number) => (
-                <Dropdown.Item eventKey={id} key={id}>
-                  {user.username}
+        {isShowResult && !hasResults && searchedProfileUsername !== "" ? (
+          <Dropdown className="w-100" show autoClose={false}>
+            <Dropdown.Menu className=" w-100 my-1">
+              <Dropdown.Item className="">
+                <div className="p-2">Unable to find profile</div>
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        ) : (
+          <Dropdown className="w-100" show={hasResults && isShowResult} autoClose={false}>
+            <Dropdown.Menu className=" w-100 my-1">
+              {data?.map((user: User, id: number) => (
+                <Dropdown.Item className="" eventKey={id} key={id}>
+                  <div className="searched-user">
+                    <Link
+                      to={`/profile/${user.ID}`}
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      <img
+                        src={
+                          user.profilePic
+                            ? "/uploads/" + user.profilePic
+                            : `/images/default-user.jpg`
+                        }
+                        className="searched-user-image"
+                        alt=""
+                      />
+                      <span className="searched-user-name">
+                        {user.username}
+                      </span>
+                    </Link>
+                  </div>
                 </Dropdown.Item>
-              ))
-            )}
-          </Dropdown.Menu>
-        </Dropdown>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
       </div>
     </div>
   );
