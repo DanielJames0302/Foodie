@@ -71,7 +71,7 @@ func SearchUser(context *fiber.Ctx, db *gorm.DB) error {
 
 	
 	username := sess.Get("username")
-	query := db.Raw("SELECT username FROM users WHERE username != ? AND username LIKE ? LIMIT 20",username, param_username + "%").Scan(&user)
+	query := db.Raw("SELECT username, id, profile_pic FROM users WHERE username != ? AND username LIKE ? LIMIT 20",username, param_username + "%").Scan(&user)
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
 	}

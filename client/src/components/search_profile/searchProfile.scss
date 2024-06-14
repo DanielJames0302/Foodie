@@ -10,7 +10,6 @@
       padding: 5px;
       background-color: white;
       color: black;
-    
 
       input {
         border: none;
@@ -27,28 +26,30 @@
           width: 200px;
         }
       }
-
- 
-   
-
-      .search-results-list {
-        margin-top: 10px;
-        width: auto;
-        background-color: white;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0px 0px 8px #ddd;
-        border-radius: 10px;
-        margin-top: 1rem;
-        max-height: 300px;
-        overflow-y: scroll;
-        .search-result {
-          padding: 10px 20px;
-        }
-        .search-result:hover {
-          background-color: #efefef;
-        }
-      }
+     
     }
   }
 }
+
+.searched-user {
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: black;
+
+  img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .searched-user-name{
+    color: black;
+    margin-left: 10px;
+  }
+}
+
+
