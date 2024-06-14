@@ -13,7 +13,6 @@ const FollowRequests = () => {
     queryKey: ["followRequests"],
     queryFn: () => fetchFollowRequests(),
   });
-  console.log(data)
   const queryClient = useQueryClient()
   const acceptMutation = useMutation<any, Error, any>({
     mutationFn: ({sender_profile_id , option }) => handldeFollowRequests({sender_profile_id, option}),
