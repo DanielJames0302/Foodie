@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
+import SearchProfile from "../search_profile/SearchProfile";
 
 const Navbar = () => {
   const { currentUser } = useContext(AuthContext);
@@ -25,10 +26,8 @@ const Navbar = () => {
         <HomeOutlinedIcon />
 
         <GridViewOutlinedIcon />
-        <div className="search">
-          <SearchIcon />
-          <input type="text" placeholder="Search..." />
-        </div>
+     
+        <SearchProfile />
       </div>
       <div className="right">
         <PersonOutlinedIcon />

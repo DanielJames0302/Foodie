@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 
@@ -62,25 +61,17 @@ func UpdateUser(context *fiber.Ctx, db *gorm.DB) error {
 
 func SearchUser(context *fiber.Ctx, db *gorm.DB) error {
 	sess := context.Locals("session").(*session.Session)
-	payload := SearchUserPayLoad{}
+	param_username := context.Query("username")
 	user := []models.Users{}
-	err := context.BodyParser(&payload)
 
-	if err != nil {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Unable to parse request body"})
+	if param_username == "" {
+		return context.Status(http.StatusOK).JSON([]models.Users{})
 	}
-	errs := validate.Struct(payload)
-	if errs != nil {
-		validationErrors := make([]string, 0)
-		for _, err := range errs.(validator.ValidationErrors) {
-				validationErrors = append(validationErrors, fmt.Sprintf("Field '%s' failed validation '%s' (actual value: '%v')", err.Field(), err.Tag(), err.Value()))
-		}
-		return context.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"errors": validationErrors,
-		})
-	}
+
+
+	
 	username := sess.Get("username")
-	query := db.Raw("SELECT username FROM users WHERE username != ? AND username LIKE ? LIMIT 20",username, "t%").Scan(&user)
+	query := db.Raw("SELECT username FROM users WHERE username != ? AND username LIKE ? LIMIT 20",username, param_username + "%").Scan(&user)
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
 	}
