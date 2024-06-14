@@ -2,14 +2,17 @@ import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import "./login.scss";
-import axios from "axios";
+
+
 
 const Login = () => {
+
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
   });
-  const [err, setErr] = useState(null);
+  const [err, setErr] = useState<String>('');
+  const {login} : any = useContext(AuthContext);
 
   const navigate = useNavigate()
 
@@ -17,9 +20,7 @@ const Login = () => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const {login} : any = useContext(AuthContext);
-
-  const handleLogin = async (e: any) => {
+  const handleLogin = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await login(inputs);
@@ -33,12 +34,7 @@ const Login = () => {
     <div className="login">
       <div className="card">
         <div className="left">
-          <h1>Hello World.</h1>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam ipsa exercitationem dignissimos, error nam,
-            consequatur.
-          </p>
+          <h1>Foodie</h1>
           <span>Don't you have an account?</span>
           <Link to="/register">
             <button>Register</button>
@@ -59,7 +55,7 @@ const Login = () => {
               name="password"
               onChange={handleChange}
             />
-            {err && err}
+            {err && <p>{err}</p>}
             <button type="submit">Login</button>
           </form>
         </div>

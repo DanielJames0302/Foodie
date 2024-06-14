@@ -40,14 +40,14 @@ func AddRelationship(context *fiber.Ctx, db *gorm.DB) error {
 
 	err := context.BodyParser(&relationshipModel)
 	if err != nil {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Uanble to parse request body"})
+		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Unable to parse request body"})
 	}
 
 	userId := context.Locals("userId").(uint)
 
 	relationshipModel.FollowerUserID = userId
 	if err != nil {
-		return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Problem with user id"})
+		return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Having issues with your user id"})
 	}
 
 	result := db.Create(&relationshipModel)
@@ -66,7 +66,7 @@ func DeleteRelationship(context *fiber.Ctx, db *gorm.DB) error {
 	u64_followedUserId, err := strconv.ParseUint(followedUserId, 10, 64)
 
 	if err != nil {
-		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Problem with followed user id"})
+		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Having issues with followed user id"})
 	}
 	relationshipModel.FollowedUserID = uint(u64_followedUserId)
 	
@@ -74,14 +74,14 @@ func DeleteRelationship(context *fiber.Ctx, db *gorm.DB) error {
 
 	relationshipModel.FollowerUserID = userInfoId
 	if err != nil {
-		return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Problem with your user id"})
+		return context.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Having issues with your user id"})
 	}
 
 	query := db.Exec("DELETE FROM relationships WHERE follower_user_id = ? AND followed_user_id = ?", relationshipModel.FollowerUserID, relationshipModel.FollowedUserID)
 	
 
 	if query.Error != nil {
-		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Cannot unfollow"})
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Unable to unfollow"})
 	}
 
 	return context.Status(http.StatusOK).JSON(&fiber.Map{"messge": "Unfollow successfully"})

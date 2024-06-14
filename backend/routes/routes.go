@@ -19,10 +19,11 @@ func WithDB(fn func(context *fiber.Ctx, db *gorm.DB) error, db *gorm.DB) func(co
 
 
 func AuthRoutes (db *gorm.DB, app *fiber.App) {
-	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db))
+	api := app.Group("/api")
 	api.Post("/auth/register", WithDB(controllers.Register,db))
 	api.Post("/auth/login", WithDB(controllers.Login,db))
-	api.Get("/auth/logout", controllers.Logout)
+	api.Get("/auth/logout",WithDB(middlewares.IsAuthorized,db), controllers.Logout)
+	api.Get("/auth/verify_user/:userId",WithDB(middlewares.IsAuthorized,db), controllers.VerifyUser)
 }
 
 func PostRoutes(db *gorm.DB, app *fiber.App) {

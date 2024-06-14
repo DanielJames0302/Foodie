@@ -1,6 +1,8 @@
+@import "../../style.scss";
+
 .login {
   height: 100vh;
-  background-color: rgb(193, 190, 255);
+  background-color: #50C878;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,31 +12,28 @@
     display: flex;
     background-color: white;
     border-radius: 10px;
-    min-height: 600px;
+    min-height: 500px;
     overflow: hidden;
 
     .left {
       flex: 1;
-      background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)),
-        url("https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&w=1600")
+      background: linear-gradient(rgba(145, 206, 174, 0.5), rgba(155, 225, 201, 0.5)),
+        url("../../assets/login-background.jpg")
           center;
       background-size: cover;
       padding: 50px;
       display: flex;
       flex-direction: column;
-      gap: 30px;
+      gap: 10px;
       color: white;
-
       h1 {
         font-size: 100px;
         line-height: 100px;
       }
-      
-      p {
-      }
-
+  
       span {
-        font-size: 14px;
+        font-size: 20px;
+        font-weight: bold;
       }
       
       button {
@@ -42,7 +41,7 @@
         padding: 10px;
         border: none;
         background-color: white;
-        color: rebeccapurple;
+        color: #50C878;
         font-weight: bold;
         cursor: pointer;
       }
@@ -53,7 +52,7 @@
       padding: 50px;
       display: flex;
       flex-direction: column;
-      gap: 50px;
+      gap: 20px;
       justify-content: center;
 
       h1 {
@@ -70,12 +69,15 @@
         border-bottom: 1px solid lightgray;
         padding: 20px 10px;
         }
+        p {
+          color: red;
+        }
         
         button {
           width: 50%;
           padding: 10px;
           border: none;
-          background-color: #938eef;
+          background-color: #50C878;
           color: white;
           font-weight: bold;
           cursor: pointer;

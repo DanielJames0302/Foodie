@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./register.scss";
 import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 const Register = () => {
   const [inputs, setInputs] = useState({
@@ -10,34 +11,34 @@ const Register = () => {
     password: "",
     name: "",
   });
-  const [err, setErr] = useState(null);
+  const [err, setErr] = useState<string>();
 
   const handleChange = (e: any) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+  const registerMutation = useMutation({
+    mutationFn: (inputs: Object) => {
+      return axios.post("http://localhost:8080/api/auth/register", inputs);
+    },
+  
+  })
 
   const handleClick = async (e: any) => {
     e.preventDefault();
-    console.log(inputs)
     try {
       await axios.post("http://localhost:8080/api/auth/register", inputs);
     } catch (err: any) {
       setErr(err.message);
-    }
+    } 
+    registerMutation.mutate(inputs)
   };
 
-  console.log(err)
 
   return (
     <div className="register">
       <div className="card">
         <div className="left">
-          <h1>Lama Social.</h1>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam ipsa exercitationem dignissimos, error nam,
-            consequatur.
-          </p>
+          <h1>Foodie</h1>
           <span>Do you have an account?</span>
           <Link to="/login">
             <button>Login</button>
