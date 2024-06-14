@@ -60,12 +60,8 @@ const SearchProfile = () => {
           <Dropdown className="w-100" show={hasResults && isShowResult} autoClose={false}>
             <Dropdown.Menu className=" w-100 my-1">
               {data?.map((user: User, id: number) => (
-                <Dropdown.Item className="" eventKey={id} key={id}>
+                <Dropdown.Item href= {`/profile/${user.ID}`} eventKey={id} key={id}>
                   <div className="searched-user">
-                    <Link
-                      to={`/profile/${user.ID}`}
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
                       <img
                         src={
                           user.profilePic
@@ -78,7 +74,6 @@ const SearchProfile = () => {
                       <span className="searched-user-name">
                         {user.username}
                       </span>
-                    </Link>
                   </div>
                 </Dropdown.Item>
               ))}
