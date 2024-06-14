@@ -33,10 +33,6 @@ const Posts: React.FC<Props> = ({ userId }) => {
     },
   });
 
-  console.log(userId)
-  console.log(data)
-
-
   return (
   
     <div className="posts">

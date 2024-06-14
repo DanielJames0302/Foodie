@@ -24,7 +24,7 @@ const LeftBar = () => {
       <div className="container">
         <div className="menu">
           <div className="user">
-            <img src={"/uploads/" + currentUser.profilePic} alt="" />
+            <img src={currentUser.profilePic ? "/uploads/" + currentUser.profilePic : `/images/default-user.jpg`} alt="" />
             <Link
               to={`/profile/${currentUser.ID}`}
               style={{ textDecoration: "none", color: "inherit" }}

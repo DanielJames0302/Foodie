@@ -34,7 +34,7 @@ func Login(context *fiber.Ctx, db *gorm.DB) error {
 
 	err = db.Where("username = ?", loginUser.Username).First(userModel).Error
 	if (err != nil) {
-		return context.Status(http.StatusNotFound).JSON(&fiber.Map{"message": "User not found"})
+		return context.Status(http.StatusNotFound).JSON("User not found")
 	}
 
 	checkPassword := bcrypt.CompareHashAndPassword([]byte(userModel.Password),[]byte(loginUser.Password))
@@ -116,4 +116,9 @@ func Logout(context *fiber.Ctx) error {
 	}
 	context.ClearCookie()
 	return context.Status(http.StatusOK).JSON(&fiber.Map{"message": "User has been logged out"})
+}
+
+
+func VerifyUser(context *fiber.Ctx) error {
+	return context.Status(http.StatusOK).JSON(&fiber.Map{"message": "User has been verified"})
 }

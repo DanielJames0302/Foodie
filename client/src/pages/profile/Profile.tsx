@@ -93,9 +93,9 @@ const Profile = () => {
       ) : (
         <>
           <div className="images">
-            <img src={"/uploads/" + data?.coverPic} alt="" className="cover" />
+            <img src={data?.coverPic ? "/uploads/" + data?.coverPic : "/images/default-cover.png" } alt="" className="cover" />
             <img
-              src={"/uploads/" + data?.profilePic}
+              src={data?.profilePic ? "/uploads/" + data?.profilePic : "/images/default-user.jpg"}
               alt=""
               className="profilePic"
             />

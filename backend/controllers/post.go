@@ -37,7 +37,7 @@ func GetPost(context *fiber.Ctx, db *gorm.DB) error {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return context.Status(http.StatusOK).JSON(results)
 			}
-			return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "internal server error"})
+			return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "Unable to load posts"})
 		}
 	} else {
 		err := db.Model(&models.Posts{}).Select(fields).
@@ -50,7 +50,7 @@ func GetPost(context *fiber.Ctx, db *gorm.DB) error {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return context.Status(http.StatusOK).JSON(results)
 			}
-			return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "internal server error"})
+			return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "Unable to load posts"})
 		}
 	}
 	return context.JSON(results)
@@ -65,7 +65,7 @@ func AddPost(context *fiber.Ctx, db *gorm.DB) error {
 
 	result := db.Create(&postModel)
 	if result.Error != nil {
-		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Cannot save post"})
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Unable to add post"})
 	}
 
 	return context.Status(http.StatusOK).JSON(&fiber.Map{"messge": "Post has been created succesfully"})
@@ -75,16 +75,16 @@ func DeletePost(context *fiber.Ctx, db *gorm.DB) error {
 	userId := context.Locals("userId")
 	currentUserId := userId
 
-	postID, err := strconv.Atoi(string(context.Query("postId")))
+	postId, err := strconv.Atoi(string(context.Query("postId")))
 	if err != nil {
-		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "problems with postID"})
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Having issues with postID"})
 	}
 	
-	result := db.Where("id = ? AND posts.user_id = ?", postID, currentUserId).Delete(&models.Posts{})
+	result := db.Where("id = ? AND posts.user_id = ?", postId, currentUserId).Delete(&models.Posts{})
 
 	if result.Error != nil {
-		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "could not delete post"})
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Unable to delete post"})
 	}
 
-	return context.Status(http.StatusOK).JSON(fiber.Map{"message": "post has been deleted"})
+	return context.Status(http.StatusOK).JSON(fiber.Map{"message": "Post has been deleted successfully"})
 }

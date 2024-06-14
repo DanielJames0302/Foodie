@@ -30,7 +30,7 @@ func SendFollowRequest (context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Request already sent"})
 	}
 	if !errors.Is(query.Error, gorm.ErrRecordNotFound) {
-		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Problem with api endpoint"})
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Having issues with request"})
 	} 
 	
 	query = db.Where("id = ?", receiverProfileId).Find(&models.Users{})
@@ -109,12 +109,14 @@ func CancelFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 func GetFollowRequests (context *fiber.Ctx, db *gorm.DB) error {
 	userInfoId := context.Locals("userId").(uint)
 
-	results := []models.FollowRequests{}
+	results := []models.Users{}
 
-	query := db.Raw("SELECT id, sender_profile_id FROM follow_requests WHERE receiver_profile_id = ?", userInfoId).Scan(&results)
+	query_statement := `SELECT u.id, u.username, u.profile_pic FROM follow_requests as fr INNER JOIN users as u ON (fr.sender_profile_id=u.id) WHERE receiver_profile_id = ?`
+
+	query := db.Raw(query_statement, userInfoId).Scan(&results)
 
 	if query.Error != nil {
-		return context.Status(http.StatusInternalServerError).JSON(query.Error)
+		return context.Status(http.StatusInternalServerError).JSON("Internal Server Error")
 	}
 
 	return context.Status(http.StatusOK).JSON(results)
