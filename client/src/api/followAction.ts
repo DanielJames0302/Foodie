@@ -6,6 +6,13 @@ interface HandleFriendRequestParams {
   option: string;
 }
 
+export const sendFollowRequests = async (userId: number, following: boolean) => {
+  const response = await makeRequest.post("/send_follow_request/" + userId);
+  if (response.status !== 200) console.log(response)
+
+  return;
+}
+
 export const fetchFollowRequests = async () => {
   const response = await makeRequest.get('/follow_requests')
 
@@ -30,7 +37,7 @@ export const handldeFollowRequests = async ({sender_profile_id, option}: HandleF
     toast(`You have accepted follow request`)
     return;
   }
-  const response = await makeRequest.post(`/decline_follow_request/${sender_profile_id}`)
+  const response = await makeRequest.delete(`/decline_follow_request/${sender_profile_id}`)
   if (response.status !== 200) {
     toast('Something went wrong')
   }

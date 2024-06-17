@@ -10,12 +10,12 @@ import { Link } from "react-router-dom";
 const SearchProfile = () => {
   const searchRef = useRef<HTMLDivElement | null>(null);
   const [isShowResult, setIsShowResult] = useState<boolean>(false);
-  const [searchedProfileUsername, setSearchedProfileUsername] =
+  const [searchedProfileName, setSearchedProfileName] =
     useState<string>("");
 
   const { data, isLoading, isError } = useQuery<any, Error, User[]>({
-    queryKey: ["searchProfile", searchedProfileUsername],
-    queryFn: () => fetchSearchingResults(searchedProfileUsername),
+    queryKey: ["searchProfile", searchedProfileName],
+    queryFn: () => fetchSearchingResults(searchedProfileName),
   });
   const hasResults = data && data.length > 0;
   const handleClick = (event: MouseEvent) => {
@@ -44,11 +44,11 @@ const SearchProfile = () => {
           type="text"
           placeholder="Search..."
           className="search-input"
-          onChange={(e) => setSearchedProfileUsername(e.target.value)}
+          onChange={(e) => setSearchedProfileName(e.target.value)}
         />
       </div>
       <div className="search-results-list">
-        {isShowResult && !hasResults && searchedProfileUsername !== "" ? (
+        {isShowResult && !hasResults && searchedProfileName !== "" ? (
           <Dropdown className="w-100" show autoClose={false}>
             <Dropdown.Menu className=" w-100 my-1">
               <Dropdown.Item className="">
@@ -72,7 +72,7 @@ const SearchProfile = () => {
                         alt=""
                       />
                       <span className="searched-user-name">
-                        {user.username}
+                        {user.name}
                       </span>
                   </div>
                 </Dropdown.Item>

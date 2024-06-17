@@ -14,10 +14,25 @@ import Courses from "../../assets/12.png";
 import Fund from "../../assets/13.png";
 import { AuthContext } from "../../context/authContext";
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { useMutation } from "@tanstack/react-query";
+import { makeRequest } from "../../axios";
 
 const LeftBar = () => {
   const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate()
+  const logoutMutate = useMutation({
+    mutationFn: () => makeRequest.post("/auth/logout"),
+    onSuccess: () => {
+      localStorage.removeItem("user");
+      navigate("/login")
+    }
+  })
+
+  const handleLogout = () => {
+    logoutMutate.mutate()
+  }
 
   return (
     <div className="leftBar">
@@ -93,6 +108,7 @@ const LeftBar = () => {
             <img src={Courses} alt="" />
             <span>Courses</span>
           </div>
+          <Button variant="danger" onClick={handleLogout}>Logout</Button>{' '}
         </div>
       </div>
     </div>

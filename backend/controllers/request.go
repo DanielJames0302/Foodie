@@ -87,6 +87,23 @@ func AcceptFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 
 }
 
+func DeclineFollowRequest(context *fiber.Ctx, db*gorm.DB) error {
+	userId := context.Locals("userId").(uint)
+	senderProfileId, err := strconv.Atoi(string(context.Params("senderProfileId")))
+
+	if (err != nil) {
+		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Problem with sender profile id"})
+	}
+
+	query := db.Exec("DELETE FROM follow_requests WHERE receiver_profile_id = ? AND sender_profile_id = ?", userId, senderProfileId)
+
+	if query.Error != nil {
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Unable to delete message"})
+	}
+
+	return context.Status(http.StatusOK).JSON(fiber.Map{"message": "Decline follow request succesfully"})
+
+}
 
 func CancelFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 	userId := context.Locals("userId").(uint)

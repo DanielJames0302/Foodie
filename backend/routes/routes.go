@@ -22,7 +22,7 @@ func AuthRoutes (db *gorm.DB, app *fiber.App) {
 	api := app.Group("/api")
 	api.Post("/auth/register", WithDB(controllers.Register,db))
 	api.Post("/auth/login", WithDB(controllers.Login,db))
-	api.Get("/auth/logout",WithDB(middlewares.IsAuthorized,db), controllers.Logout)
+	api.Post("/auth/logout",WithDB(middlewares.IsAuthorized,db), controllers.Logout)
 	api.Get("/auth/verify_user/:userId",WithDB(middlewares.IsAuthorized,db), controllers.VerifyUser)
 }
 
@@ -70,6 +70,7 @@ func FollowRequestRoutes(db *gorm.DB, app *fiber.App) {
 	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db))
 	api.Post("/send_follow_request/:receiverProfileId", WithDB(controllers.SendFollowRequest, db))
 	api.Post("/accept_follow_request/:senderProfileId", WithDB(controllers.AcceptFollowRequest, db))
+	api.Delete("/decline_follow_request/:senderProfileId", WithDB(controllers.DeclineFollowRequest, db))
 	api.Delete("/cancel_follow_request/:receiverProfileId", WithDB(controllers.CancelFollowRequest, db))
 	api.Get("/follow_requests", WithDB(controllers.GetFollowRequests, db) )
 	api.Get("/sended_follow_requests", WithDB(controllers.GetSendedFollowRequests, db))

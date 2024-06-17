@@ -16,6 +16,7 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import Update from "../../components/update/Update";
 import { useState } from "react";
+import { AxiosError } from "axios";
 
 interface Relationship {
   userID: number;
@@ -33,7 +34,7 @@ interface User {
 
 const Profile = () => {
   const [openUpdate, setOpenUpdate] = useState<boolean>(false);
-  const { currentUser, setCurrentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
   const userId = parseInt(useLocation().pathname.split("/")[2]);
 
@@ -58,19 +59,29 @@ const Profile = () => {
       }),
   });
 
+  const { isLoading: requestIsLoading, data: requestData } = useQuery<any, Error, any>({
+    queryKey: ["followRequests", userId],
+    queryFn: () => makeRequest.get("/sended_follow_requests").then((res) => {
+      return res.data
+    })
+  })
+  console.log(requestData)
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: (following: boolean) => {
       if (following)
         return makeRequest.delete("/relationships?userId=" + userId);
-      return makeRequest.post("/relationships", { followed_user_id: userId });
+      return makeRequest.post("/send_follow_request/" + userId);
     },
 
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["relationship", userId] });
     },
+    onError: (err: AxiosError) => {
+      console.log(err)
+    }
   });
 
   const handleFollow = () => {
@@ -123,7 +134,7 @@ const Profile = () => {
                       (item) => item.userID === currentUser.ID
                     )
                       ? "Following"
-                      : "Follow"}
+                      :requestData?.some((item: any) => item.receiver_profile_id === userId) ? "Follow request sent" : "Follow"}
                   </button>
                 )}
               </div>
