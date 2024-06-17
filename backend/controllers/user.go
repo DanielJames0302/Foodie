@@ -5,13 +5,11 @@ import (
 
 
 	"github.com/DanielJames0302/Foodie/models"
-	"github.com/go-playground/validator/v10"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/session"
 	"gorm.io/gorm"
 )
-var validate = validator.New()
+
 type SearchUserPayLoad struct {
 	Username string `json:"username" validate:"required"`
 }
@@ -45,9 +43,6 @@ func UpdateUser(context *fiber.Ctx, db *gorm.DB) error {
 
 	userInfoId := context.Locals("userId"); 
 
-	if err != nil {
-		return context.JSON("Problem with user id")
-	}
 
 	err = db.Model(models.Users{}).Where("id = ?", userInfoId).Updates(UserPayload).Error
 
@@ -60,18 +55,14 @@ func UpdateUser(context *fiber.Ctx, db *gorm.DB) error {
 
 
 func SearchUser(context *fiber.Ctx, db *gorm.DB) error {
-	sess := context.Locals("session").(*session.Session)
-	param_username := context.Query("username")
+	param_name := context.Query("name")
 	user := []models.Users{}
 
-	if param_username == "" {
+	if param_name == "" {
 		return context.Status(http.StatusOK).JSON([]models.Users{})
 	}
 
-
-	
-	username := sess.Get("username")
-	query := db.Raw("SELECT username, id, profile_pic FROM users WHERE username != ? AND username LIKE ? LIMIT 20",username, param_username + "%").Scan(&user)
+	query := db.Raw("SELECT username, id, name, profile_pic FROM users WHERE name LIKE ? LIMIT 20",param_name + "%").Scan(&user)
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
 	}

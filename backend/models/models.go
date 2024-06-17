@@ -1,10 +1,9 @@
 package models
 
 import (
+	"time"
+
 	"gorm.io/gorm"
-
-
-	
 )
 
 
@@ -19,6 +18,10 @@ type Users struct {
   ProfilePic 		string   `json:"profilePic"`
   City 					string 	`json:"city"`
   Website 			string   `json:"website"`
+
+	Conversations []Conversation `gorm:"many2many:conversation_user;"`
+	SeenMessages 	[]Message `gorm:"many2many:message_user;"`
+
 }
 
 type Posts struct {
@@ -65,6 +68,30 @@ type FollowRequests struct {
 	Users 	Users `gorm:"foreignKey:ReceiverProfileId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Users2 	Users `gorm:"foreignKey:SenderProfileId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 
+}
+
+type Message struct {
+	gorm.Model
+	Body string
+	Image string
+
+	SeenIds []Users `gorm:"many2many:message_user;"`
+	ConversationIds [] Conversation `gorm:"foreignKey:conversation_message"`
+}
+
+type Conversation struct {
+	gorm.Model
+	LastMessageAt time.Time
+	Name string
+	IsGroup bool
+
+	Users    []Users    `gorm:"many2many:conversation_user;"`
+	Messages []Message `gorm:"foreignKey:conversation_message"`
+
+	SenderId uint
+	Users2 	Users `gorm:"foreignKey:SenderId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+
+	
 }
 
 func MigrateBooks(db *gorm.DB) error {
