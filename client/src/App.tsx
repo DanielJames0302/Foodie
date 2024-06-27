@@ -20,12 +20,11 @@ function App() {
       <div className={`theme-light`}>
         <Navbar />
         <div style={{ display: "flex" }}>
-          <LeftBar />
           <div style={{ flex: 6 }}>
             <Outlet />
             <ToastContainer/>
           </div>
-          <RightBar />
+
         </div>
        
       </div>

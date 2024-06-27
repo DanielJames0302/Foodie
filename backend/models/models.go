@@ -19,8 +19,8 @@ type Users struct {
   City 					string 	`json:"city"`
   Website 			string   `json:"website"`
 
-	Conversations []Conversation `gorm:"many2many:conversation_user;"`
-	SeenMessages 	[]Message `gorm:"many2many:message_user;"`
+	Conversations []*Conversation `gorm:"many2many:conversation_user;"`
+	SeenMessages 	[]*Message      `gorm:"many2many:message_user;"`
 
 }
 
@@ -75,8 +75,15 @@ type Message struct {
 	Body string
 	Image string
 
-	SeenIds []Users `gorm:"many2many:message_user;"`
-	ConversationIds [] Conversation `gorm:"foreignKey:conversation_message"`
+	SeenId uint `gorm:"index:,unique"`;
+	SeenIds []*Users `gorm:"many2many:user_message;foreignKey:SeenId;joinForeignKey:UserMessageID;References:ID;joinReferences:UserID"`;
+
+	ConversationId uint `gorm:"index:,unique"`;
+	ConversationIds []*Conversation `gorm:"many2many:conversation_message; foreignKey:ConversationId;joinForeignKey:ConversationMessageID;References:ID;joinReferences:ConversationID"`
+	
+	SenderId uint
+	Sender Users `gorm:"foreignKey:SenderId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+
 }
 
 type Conversation struct {
@@ -85,16 +92,12 @@ type Conversation struct {
 	Name string
 	IsGroup bool
 
-	Users    []Users    `gorm:"many2many:conversation_user;"`
-	Messages []Message `gorm:"foreignKey:conversation_message"`
-
-	SenderId uint
-	Users2 	Users `gorm:"foreignKey:SenderId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-
+	User    []*Users    `gorm:"many2many:conversation_user;"`
+	Messages []*Message  `gorm:"many2many:conversation_message"`
 	
 }
 
 func MigrateBooks(db *gorm.DB) error {
-	err := db.AutoMigrate( &Users{}, &Posts{}, &Relationships{}, &Likes{}, &Comments{}, &FollowRequests{})
+	err := db.AutoMigrate( &Users{}, &Posts{}, &Relationships{}, &Likes{}, &Comments{}, &FollowRequests{}, &Conversation{}, &Message{})
 	return err
 }

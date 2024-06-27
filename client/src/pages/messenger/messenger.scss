@@ -1,0 +1,7 @@
+.messenger {
+  height: calc(100vh - 70px);
+  @media (min-width: 1024px) {
+    display: block;
+    padding-left: 200px;
+  }
+}
