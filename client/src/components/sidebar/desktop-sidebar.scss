@@ -1,0 +1,35 @@
+.desktop-sidebar {
+  position: fixed;
+  height: calc(100vh - 70px);
+  top: 70px;
+  bottom: 0px;
+  left: 0;
+  z-index: 40;
+  width: 4rem;
+  padding-left: 20px;
+  padding-right: 20px;
+
+  background-color: white;
+  border-right: 1px solid rgb(198, 194, 194);
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  nav {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 0;
+  }
+}
