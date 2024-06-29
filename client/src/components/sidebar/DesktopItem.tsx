@@ -22,7 +22,7 @@ const DesktopItem:React.FC<DesktopItemProps> = ({
   }
   return (
     <div onClick={handleClick}>
-        <Link className="desktop-item-link" to={href}>
+        <Link className={active ? "desktop-item-link active" : "desktop-item-link"} to={href}>
           <Icon className="icon-image"/>
         </Link>
     </div>

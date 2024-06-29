@@ -7,6 +7,7 @@ import Profile from "../pages/profile/Profile";
 import Login from "../pages/login/Login";
 import Register from "../pages/register/Register";
 import Messenger from "../pages/messenger/Messenger";
+import ConversationLayout from "../pages/conversation/ConversationLayout";
 
 
 const router = createBrowserRouter([
@@ -27,9 +28,17 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-        path: "/messages",
+        path: "/users_messages",
         element: <Messenger />
       },
+      {
+        path: "/conversations",
+        element: <ConversationLayout />
+      },
+      {
+        path: "/conversations/:conversationId",
+        element: <ConversationLayout />
+      }
      
     ],
   },

@@ -29,6 +29,8 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	routes.UserRoutes(r.DB, app)
 	routes.RelationshipRoutes(r.DB, app)
 	routes.FollowRequestRoutes(r.DB, app)
+	routes.ConversationRoutes(r.DB,app)
+	routes.MessageRoutes(r.DB,app)
 }
 
 func main() {

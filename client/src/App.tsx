@@ -19,13 +19,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <div className={`theme-light`}>
         <Navbar />
-        <div style={{ display: "flex" }}>
-          <div style={{ flex: 6 }}>
-            <Outlet />
-            <ToastContainer/>
-          </div>
+      
+        <Outlet />
+        <ToastContainer/>
+ 
 
-        </div>
+  
        
       </div>
       

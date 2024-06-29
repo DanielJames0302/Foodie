@@ -1,7 +1,26 @@
 .messenger {
-  height: calc(100vh - 70px);
-  @media (min-width: 1024px) {
-    display: block;
-    padding-left: 200px;
+  flex: 6;
+  height: 100%;
+
+
+  .chatbox {
+    margin-left: 10px;
+    flex: 9;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    .chatbox-people {
+      flex: 1;
+
+    }
+    .chat-conversation {
+      background-color: #f4eeee;
+      text-align: center;
+      flex: 5;
+      height: 100%;
+   
+    }
+   
+
   }
 }

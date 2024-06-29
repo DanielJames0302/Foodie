@@ -1,0 +1,31 @@
+.conversation-box {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 5px 5px;
+  gap: 10px;
+  border-radius: 10px;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  .conversation-box-info {
+    flex: 1;
+    margin-left: 10px;
+
+    .last-message-text {
+      color: black;
+    }
+  }
+
+}
+
+.conversation-box:hover {
+  background-color: rgb(189, 255, 224);
+}
+.selected {
+  background-color: rgba(230, 228, 228, 0.774);
+}
+.hasSeen {
+  color: gray;
+}

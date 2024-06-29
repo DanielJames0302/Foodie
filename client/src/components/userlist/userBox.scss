@@ -1,0 +1,24 @@
+.userbox {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 10px;
+  cursor: pointer;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  border-radius: 10px;
+  img {
+    height: 20px;
+    width: 20px;
+    margin-right: 10px;
+    border-radius: 5px;
+  }
+  span {
+    font-size: 20px;
+  }
+} 
+
+.userbox:hover {
+  background-color: #d3d3d3;
+}

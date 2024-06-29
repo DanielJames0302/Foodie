@@ -75,3 +75,15 @@ func FollowRequestRoutes(db *gorm.DB, app *fiber.App) {
 	api.Get("/follow_requests", WithDB(controllers.GetFollowRequests, db) )
 	api.Get("/sended_follow_requests", WithDB(controllers.GetSendedFollowRequests, db))
 }
+
+
+func ConversationRoutes(db *gorm.DB, app *fiber.App) {
+	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db));
+	api.Get("/conversations", WithDB(controllers.GetConversations, db));
+	api.Get("/conversations/:id", WithDB(controllers.GetConversationById,db));
+}
+
+func MessageRoutes(db *gorm.DB, app *fiber.App) {
+	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db));
+	api.Get("/messages/:conversationId",WithDB(controllers.GetMessages,db));
+}
