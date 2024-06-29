@@ -1,8 +1,23 @@
-.sidebar {
-  height: 100%;
 
-  main {
-    padding-left: 5rem;
-    height: 100%;
+
+@import "../../style.scss";
+
+.sidebar{
+  @include themify($themes) {
+    display: flex;
+    flex-direction: row;
+    padding: 5px 5px;
+    min-height: 100vh;
+
+    .message {
+      flex: 8;
+    }
+    @include mobile {
+      padding: 10px;
+    }
+
+    @include tablet{
+      padding: 20px;
+    }
   }
-}
+ }

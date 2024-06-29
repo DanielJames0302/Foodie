@@ -11,6 +11,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   const { currentUser } = useContext(AuthContext) 
+
  
 
   if (!currentUser) {

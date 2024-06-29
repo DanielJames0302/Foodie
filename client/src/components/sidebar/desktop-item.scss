@@ -6,9 +6,14 @@ div {
     font-size: 10px;
     padding: 10px;
     color: gray;
+    border-radius: 10px;
     .icon-image {
       height: 15px;
       width: 15px;
     }
   }
+}
+
+.active {
+  background-color: rgba(230, 228, 228, 0.774)
 }

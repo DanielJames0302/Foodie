@@ -20,10 +20,10 @@ type RelationshipPayload struct {
 
 func GetRelationships(context *fiber.Ctx, db *gorm.DB) error {
 
-	var results []RelationshipResponse
+	var results []models.Users
 	id := context.Query("followedUserId")
 
-	err := db.Model(&models.Relationships{}).Select("relationships.follower_user_id").Where("relationships.followed_user_id = ?", id).Find(&results).Error
+	err := db.Model(&models.Relationships{}).Select("relationships.follower_user_id, users.name, users.profile_pic").Joins("LEFT JOIN users ON relationships.follower_user_id = users.id").Where("relationships.followed_user_id = ?", id).Find(&results).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

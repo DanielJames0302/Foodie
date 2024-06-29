@@ -19,7 +19,7 @@ type Users struct {
   City 					string 	`json:"city"`
   Website 			string   `json:"website"`
 
-	Conversations []*Conversation `gorm:"many2many:conversation_user;"`
+	Conversations  []*Conversation `gorm:"many2many:conversation_user;"`
 	SeenMessages 	[]*Message      `gorm:"many2many:message_user;"`
 
 }
@@ -92,7 +92,7 @@ type Conversation struct {
 	Name string
 	IsGroup bool
 
-	User    []*Users    `gorm:"many2many:conversation_user;"`
+	Users    []*Users    `gorm:"many2many:conversation_user;"` 
 	Messages []*Message  `gorm:"many2many:conversation_message"`
 	
 }
