@@ -11,9 +11,11 @@ interface HeaderProps {
 }
 const Header: React.FC<HeaderProps> = ({conversation}) => {
  const otherUser = useOtherUser(conversation);
- console.log(conversation)
-
   const statusText = 'Active';
+
+  if (otherUser === undefined) {
+    return <div></div>
+  }
 
 
   return (

@@ -2,12 +2,12 @@ import { User } from "./user"
 
 export type FullMessageType = {
   id: number,
-  createdAt: Date,
-  body: string,
+  CreatedAt: Date,
+  Body: string,
   image: string,
   senderId: number,
-  sender: User,
-  seen: User[],
+  Sender: User,
+  SeenIds: User[],
 }
 
 export type FullConversationType = {
@@ -15,5 +15,5 @@ export type FullConversationType = {
   Name: string,
   isGroup: boolean,
   Users: User[],
-  messages: FullMessageType[],
+  Messages: FullMessageType[],
 }

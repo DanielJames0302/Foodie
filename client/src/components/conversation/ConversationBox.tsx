@@ -23,14 +23,14 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
   const navigate = useNavigate();
   const handleClick = useCallback(() => {
     setCurrentChat(data);
-    navigate("/conversations/" + data.ID)
+    navigate("/conversations/" + data.ID);
   }, [data.ID]);
 
-
+  console.log(data);
   const lastMessage = useMemo(() => {
-    const messages = data.messages || [];
+    const messages = data.Messages || [];
     return messages[messages.length - 1];
-  }, [data.messages]);
+  }, [data.Messages]);
 
   const userName = useMemo(() => {
     return currentUser.username;
@@ -41,7 +41,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
       return false;
     }
 
-    const seenArray = lastMessage.seen || [];
+    const seenArray = lastMessage.SeenIds || [];
 
     if (!userName) {
       return false;
@@ -55,12 +55,13 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
       return `Sent an image`;
     }
 
-    if (lastMessage?.body) {
-      return lastMessage.body;
+    if (lastMessage?.Body) {
+      return lastMessage.Body;
     }
 
     return "Started a conversation";
   }, [lastMessage]);
+  console.log("hasSeen + ", hasSeen);
 
   return (
     <div
@@ -69,11 +70,20 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     >
       <Avatar user={otherUser} />
       <div className="conversation-box-info">
-        <strong>{data.Name || otherUser.name}</strong>
-        {lastMessage?.createdAt && (
-          <p>{format(new Date(lastMessage.createdAt), "p")}</p>
-        )}
-        <p className={hasSeen ? "last-message-text hasSeen" : "last-message-text"}>{lastMessageText}</p>
+        <div className="conversation-box-info-top">
+          <strong>{data.Name || otherUser.name}</strong>
+          {lastMessage?.CreatedAt && (
+            <div>{format(new Date(lastMessage.CreatedAt), "p")}</div>
+          )}
+        </div>
+
+        <div
+          className={
+            hasSeen ? "conversation-box-info-bottom hasSeen" : "conversation-box-info-bottom"
+          }
+        >
+          {lastMessageText}
+        </div>
       </div>
     </div>
   );

@@ -29,9 +29,9 @@ const ConversationLayout = () => {
           ) : (
             <ConversationList initialItems={data || []} />
           )}
-          <div className="chat-conversation">
-                  <ChatBox />
-          </div>
+         
+          <ChatBox />
+
         </div>
       </ConversationContextProvider>
     </Sidebar>
