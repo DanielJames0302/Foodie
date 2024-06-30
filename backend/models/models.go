@@ -75,12 +75,10 @@ type Message struct {
 	Body string
 	Image string
 
-	SeenId uint `gorm:"index:,unique"`;
-	SeenIds []*Users `gorm:"many2many:user_message;foreignKey:SeenId;joinForeignKey:UserMessageID;References:ID;joinReferences:UserID"`;
+	SeenIds []*Users `gorm:"many2many:message_user;"`
 
-	ConversationId uint `gorm:"index:,unique"`;
-	ConversationIds []*Conversation `gorm:"many2many:conversation_message; foreignKey:ConversationId;joinForeignKey:ConversationMessageID;References:ID;joinReferences:ConversationID"`
-	
+	ConversationId uint
+	Conversation Conversation `gorm:"foreignKey:ConversationId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 	SenderId uint
 	Sender Users `gorm:"foreignKey:SenderId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 

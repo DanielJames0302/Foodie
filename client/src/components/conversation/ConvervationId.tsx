@@ -6,6 +6,8 @@ import { useParams } from "react-router-dom";
 import Header from "./Header";
 import CircularProgress from "@mui/material/CircularProgress";
 import Body from "./Body";
+import Form from "./Form";
+import './ConversationId.scss'
 
 interface ConservationIdProps {
   conservationId: string;
@@ -13,7 +15,7 @@ interface ConservationIdProps {
 
 const ConvervationId:React.FC<ConservationIdProps> = ({ conservationId }) => {
 
-  const { data: conversationData, isLoading: conversationIsLoading} = useQuery<any, Error, any>({
+  const { data: conversationData, isLoading: conversationIsLoading} = useQuery<FullConversationType, Error, FullConversationType>({
     queryKey: ["conversation", conservationId],
     queryFn:  () => makeRequest.get("/conversations/" + conservationId).then((res) => {
         return res.data as FullConversationType;
@@ -26,11 +28,12 @@ const ConvervationId:React.FC<ConservationIdProps> = ({ conservationId }) => {
       return res.data as FullConversationType;
     }),
   })
-
+  console.log(conversationData)
   return (
     <div className="conversationId">
-      {!conversationIsLoading ? <Header conversation={conversationData}/> : <CircularProgress/>}
-      <Body />
+      {!conversationIsLoading && conversationData !== undefined ? <Header conversation={conversationData}/> : <CircularProgress/>}
+      {!messageIsLoading ? <Body initialMessages={messageData}/> : <CircularProgress />}
+      <Form />
     </div>
   )
 }

@@ -11,21 +11,44 @@
   transition-duration: 150ms;
   .conversation-box-info {
     flex: 1;
-    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 
     .last-message-text {
       color: black;
     }
-  }
 
+    &-top {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      div {
+        display: flex;
+        align-items: center;
+        font-size: small;
+        font-weight: 300;
+        color: #6b7280;
+      }
+    }
+    &-bottom {
+      font-size: small;
+      font-weight: 500;
+      color: black;
+    }
+    .hasSeen {
+      color: #6b7280;
+    }
+  }
 }
 
 .conversation-box:hover {
-  background-color: rgb(189, 255, 224);
+  background-color: #50C878;
 }
 .selected {
   background-color: rgba(230, 228, 228, 0.774);
 }
 .hasSeen {
-  color: gray;
+  color: #6b7280;
 }
