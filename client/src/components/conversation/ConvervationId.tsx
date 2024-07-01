@@ -28,7 +28,7 @@ const ConvervationId:React.FC<ConservationIdProps> = ({ conservationId }) => {
       return res.data as FullConversationType;
     }),
   })
-  console.log(conversationData)
+
   return (
     <div className="conversationId">
       {!conversationIsLoading && conversationData !== undefined ? <Header conversation={conversationData}/> : <CircularProgress/>}

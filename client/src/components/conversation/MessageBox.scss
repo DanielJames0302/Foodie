@@ -2,14 +2,12 @@
   display: flex;
   gap: 3px;
   padding: 4px 4px;
-  &-avatar {
+  .isOwnAvatar {
     order: 2;
   }
   .message-body {
     display: flex;
     flex-direction: column;
-    align-items: end;
-    justify-content: end;
     gap: 2px;
 
       &-content {
@@ -24,12 +22,22 @@
       .isOwnMessage {
         background-color: rgb(28, 183, 245);
        }
+      .isOwn {
+        display: flex;
+        justify-content: end;
+       }
        
       &-time {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
         font-size: small;
         font-weight: 300;
         color: #6b7280;
       }
+
+
+      
       &-seen-list {
         font-size: small;
         font-weight: 300;
@@ -40,6 +48,7 @@
 }
 
 .isOwn {
+  display: flex;
   justify-content: end;
-
 }
+

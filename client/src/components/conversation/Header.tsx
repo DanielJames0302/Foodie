@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({conversation}) => {
         <Avatar user={otherUser} />
         <div className="header-info">
             <div className="header-info-name">
-              {conversation.Name}
+              {conversation.Name ? conversation.Name : otherUser.name}
             </div>
             <div className="header-info-status">
               {statusText}

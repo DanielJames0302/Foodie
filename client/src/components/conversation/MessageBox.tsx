@@ -18,15 +18,16 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
     .map((user) => user.name)
     .join(", ");
 
-    console.log(isOwn)
+  
+
 
   return (
     <div className={isOwn ? "message-box isOwn" : "message-box"}>
-      <div className="message-box-avatar">
+      <div className={isOwn ? "message-box-avatar isOwnAvatar": "message-box-avatar"}>
         <Avatar user={data.Sender} />
       </div>
       <div className="message-body">
-          <div className={isOwn ?"message-body-time isOwn" : "message-body-wrapper-time" }>
+          <div className={isOwn ?"message-body-time isOwn" : "message-body-time" }>
             {format(new Date(data.CreatedAt), "p")}
           </div>
           <div className={isOwn ? "message-body-content isOwnMessage": "message-body-content"}>{data.Body}</div>
