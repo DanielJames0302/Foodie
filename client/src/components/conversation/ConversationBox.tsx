@@ -26,7 +26,6 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     navigate("/conversations/" + data.ID);
   }, [data.ID]);
 
-  console.log(data);
   const lastMessage = useMemo(() => {
     const messages = data.Messages || [];
     return messages[messages.length - 1];
@@ -61,7 +60,6 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 
     return "Started a conversation";
   }, [lastMessage]);
-  console.log("hasSeen + ", hasSeen);
 
   return (
     <div

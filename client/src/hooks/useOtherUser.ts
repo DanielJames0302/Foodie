@@ -4,8 +4,6 @@ import { AuthContext } from "../context/authContext";
 import { User } from "../interfaces/user";
 
 const useOtherUser = (conversation: FullConversationType) => {
-  console.log("use other user")
-  console.log(conversation)
   const { currentUser } = useContext(AuthContext);
   const  otherUser = useMemo(() => {
     const currentUserEmail = currentUser.email;

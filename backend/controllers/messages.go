@@ -19,8 +19,12 @@ func GetMessages(context *fiber.Ctx, db *gorm.DB) error {
     Preload("SeenIds").
     Find(&results).Error;
 
+	if !(len(results) > 0) {
+		return context.JSON([]models.Message{})
+	}
+
 	if err != nil {
-		panic(err);
+		return context.Status(http.StatusInternalServerError).SendString("Internal Server Error");
 	}
 
 	return context.Status(http.StatusOK).JSON(results);

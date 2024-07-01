@@ -26,19 +26,32 @@ const Navbar = () => {
         <HomeOutlinedIcon />
 
         <GridViewOutlinedIcon />
-     
+
         <SearchProfile />
       </div>
       <div className="right">
         <PersonOutlinedIcon />
-        <EmailOutlinedIcon />
+        <Link
+          to={`/conversations`}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <EmailOutlinedIcon />
+        </Link>
+
         <NotificationsOutlinedIcon />
         <div className="user">
           <Link
             to={`/profile/${currentUser.ID}`}
             style={{ textDecoration: "none", color: "inherit" }}
           >
-            <img src={currentUser.profilePic ? "/uploads/" + currentUser.profilePic : `/images/default-user.jpg`} alt="" />
+            <img
+              src={
+                currentUser.profilePic
+                  ? "/uploads/" + currentUser.profilePic
+                  : `/images/default-user.jpg`
+              }
+              alt=""
+            />
             <span>{currentUser.name}</span>
           </Link>
         </div>
