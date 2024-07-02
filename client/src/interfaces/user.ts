@@ -5,6 +5,7 @@ export interface UserState{
 
 export interface User{
   ID: number;
+  CreatedAt: Date;
   username: string;
   email: string;
   name: string;

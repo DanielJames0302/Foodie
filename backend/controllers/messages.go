@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/DanielJames0302/Foodie/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/pusher/pusher-http-go/v5"
 	"gorm.io/gorm"
 )
 
@@ -30,7 +32,7 @@ func GetMessages(context *fiber.Ctx, db *gorm.DB) error {
 	return context.Status(http.StatusOK).JSON(results);
 }	
 
-func CreateMessage(context *fiber.Ctx, db *gorm.DB) error {
+func CreateMessage(context *fiber.Ctx, db *gorm.DB, pusherClient *pusher.Client) error {
 	requestBody := models.Message{};
 	userId := context.Locals("userId").(uint)
 	err := context.BodyParser(&requestBody);
@@ -61,11 +63,25 @@ func CreateMessage(context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(fiber.StatusInternalServerError).SendString("Failed to find conversation")
 	}
 
+	if err := db.Model(&newMessage).Preload("Sender").First(&newMessage).Error; err != nil {
+		return context.Status(fiber.StatusInternalServerError).SendString("Failed to fetch new message with sender")
+	}
+
 	updatedConversation.LastMessageAt = time.Now()
 	updatedConversation.Messages = append(updatedConversation.Messages, &newMessage)
 
 	if err := db.Save(&updatedConversation).Error; err != nil {
 		return context.Status(fiber.StatusInternalServerError).SendString("Failed to update conversation")
 	}
+	conversationId := fmt.Sprintf("%d", requestBody.ConversationId) 
+	pusherClient.Trigger(conversationId, "messages:new", updatedConversation.Messages[len(updatedConversation.Messages) - 1]);
+
+
+	for _, user := range updatedConversation.Users {
+		pusherClient.Trigger(user.Username, "conversation:update", map[string]interface{}{
+				"ID":       conversationId,
+				"Messages": updatedConversation.Messages[len(updatedConversation.Messages) - 1],
+		})
+}
 	return context.Status(http.StatusOK).JSON(fiber.Map{"message": "Save message successfully"});
 }

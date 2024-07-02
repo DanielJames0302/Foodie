@@ -8,27 +8,30 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Body from "./Body";
 import Form from "./Form";
 import './ConversationId.scss'
+import { useEffect } from "react";
+import { pusherClient } from "../../libs/pusher";
 
 interface ConservationIdProps {
-  conservationId: string;
+  conversationId: string;
 }
 
-const ConvervationId:React.FC<ConservationIdProps> = ({ conservationId }) => {
+const ConvervationId:React.FC<ConservationIdProps> = ({ conversationId }) => {
 
   const { data: conversationData, isLoading: conversationIsLoading} = useQuery<FullConversationType, Error, FullConversationType>({
-    queryKey: ["conversation", conservationId],
-    queryFn:  () => makeRequest.get("/conversations/" + conservationId).then((res) => {
+    queryKey: ["conversation", conversationId],
+    queryFn:  () => makeRequest.get("/conversations/" + conversationId).then((res) => {
         return res.data as FullConversationType;
       }),
   })
 
   const { data: messageData, isLoading: messageIsLoading} = useQuery<any, Error, any>({
-    queryKey: ["mesasge", conservationId],
-    queryFn: () => makeRequest.get("/messages/" + conservationId).then((res) => {
+    queryKey: ["mesasge", conversationId],
+    queryFn: () => makeRequest.get("/messages/" + conversationId).then((res) => {
       return res.data as FullConversationType;
     }),
   })
 
+ 
   return (
     <div className="conversationId">
       {!conversationIsLoading && conversationData !== undefined ? <Header conversation={conversationData}/> : <CircularProgress/>}

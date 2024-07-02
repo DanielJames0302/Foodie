@@ -4,6 +4,7 @@ import (
 	"github.com/DanielJames0302/Foodie/controllers"
 	"github.com/DanielJames0302/Foodie/middlewares"
 	"github.com/gofiber/fiber/v2"
+	"github.com/pusher/pusher-http-go/v5"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +17,11 @@ func WithDB(fn func(context *fiber.Ctx, db *gorm.DB) error, db *gorm.DB) func(co
 	}
 }
 
-
+func WithDBAndPusher(fn func(context *fiber.Ctx, db *gorm.DB, pusherClient *pusher.Client) error, db *gorm.DB, pusherClient *pusher.Client) func(context *fiber.Ctx) error {
+	return func(context *fiber.Ctx) error {
+		return fn(context, db, pusherClient)
+	}
+}
 
 func AuthRoutes (db *gorm.DB, app *fiber.App) {
 	api := app.Group("/api")
@@ -77,17 +82,18 @@ func FollowRequestRoutes(db *gorm.DB, app *fiber.App) {
 }
 
 
-func ConversationRoutes(db *gorm.DB, app *fiber.App) {
+func ConversationRoutes(db *gorm.DB, app *fiber.App, pusherClient *pusher.Client) {
 	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db));
 	api.Get("/conversations", WithDB(controllers.GetConversations, db));
-	api.Post("/conversations", WithDB(controllers.CreateConversation, db));
-	api.Post("/conversations/:id/seen", WithDB(controllers.ConversationSeen,db));
+	api.Post("/conversations", WithDBAndPusher(controllers.CreateConversation, db, pusherClient));
+	api.Post("/conversations/:id/seen", WithDBAndPusher(controllers.ConversationSeen,db, pusherClient));
 	api.Get("/conversations/:id", WithDB(controllers.GetConversationById,db));
+	api.Delete("/conversations/:id", WithDBAndPusher(controllers.DeleteConversation,db,pusherClient));
  
 }
 
-func MessageRoutes(db *gorm.DB, app *fiber.App) {
+func MessageRoutes(db *gorm.DB, app *fiber.App, pusherClient *pusher.Client) {
 	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db));
 	api.Get("/messages/:conversationId",WithDB(controllers.GetMessages,db));
-	api.Post("/messages", WithDB(controllers.CreateMessage,db));
+	api.Post("/messages", WithDBAndPusher(controllers.CreateMessage,db, pusherClient));
 }

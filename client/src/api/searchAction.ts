@@ -11,6 +11,5 @@ export const fetchSearchingResults = async (name: string) => {
   if (!response.data) {
     throw Error("data is undefined")
   }
-  console.log(response.data)
   return response.data
 }

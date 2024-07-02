@@ -1,4 +1,7 @@
 .body {
   flex: 1;
   overflow-y: auto;
+  &-bottom {
+    padding-top: 10px;
+  }
 }

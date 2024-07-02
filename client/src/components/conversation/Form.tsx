@@ -25,7 +25,6 @@ const Form = () => {
     },
   })
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data.message)
     setValue("message", "", { shouldValidate: true });
     submitMutation.mutate({body: data.message, conversationId: Number(conversationId), image: ""});
   };
