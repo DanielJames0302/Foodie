@@ -1,11 +1,11 @@
 import { User } from "./user"
 
 export type FullMessageType = {
-  id: number,
+  ID: number,
   CreatedAt: Date,
   Body: string,
   image: string,
-  senderId: number,
+  SenderId: number,
   Sender: User,
   SeenIds: User[],
 }

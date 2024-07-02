@@ -9,9 +9,14 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-
+      .isOwnMessage {
+        display: flex;
+        justify-content: end;
+        background-color: rgb(28, 183, 245);
+      }
       &-content {
         height: 100%;
+        width: fit-content;
         padding: 10px 10px;
         overflow: hidden;
         background-color: #6b7280;
@@ -19,9 +24,7 @@
         font-weight: 500;
         border-radius: 20px;
       }
-      .isOwnMessage {
-        background-color: rgb(28, 183, 245);
-       }
+
       .isOwn {
         display: flex;
         justify-content: end;
@@ -45,6 +48,10 @@
       }
     
   }
+  .isOwn {
+    display: flex;
+    align-items: end;
+   }
 }
 
 .isOwn {

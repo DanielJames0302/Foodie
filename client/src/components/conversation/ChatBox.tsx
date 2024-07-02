@@ -9,7 +9,7 @@ const ChatBox = () => {
   return (
     <div className="chatbox">
           {conversationId ? (
-            <ConservationId conservationId = {conversationId} />
+            <ConservationId conversationId = {conversationId} />
           ) : (
             <span className="chatbox-prompt-text">
             Open a conversation to start a chat.

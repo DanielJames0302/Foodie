@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
+	"github.com/pusher/pusher-http-go/v5"
 )
 var store = session.New()
 type Repository struct {
@@ -19,7 +20,7 @@ type Repository struct {
 
 
 
-func (r *Repository) SetupRoutes(app *fiber.App) {
+func (r *Repository) SetupRoutes(app *fiber.App, pusherClient *pusher.Client) {
 
 	routes.AuthRoutes(r.DB, app)
 	routes.PostRoutes(r.DB, app)
@@ -29,8 +30,8 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	routes.UserRoutes(r.DB, app)
 	routes.RelationshipRoutes(r.DB, app)
 	routes.FollowRequestRoutes(r.DB, app)
-	routes.ConversationRoutes(r.DB,app)
-	routes.MessageRoutes(r.DB,app)
+	routes.ConversationRoutes(r.DB,app, pusherClient)
+	routes.MessageRoutes(r.DB,app, pusherClient)
 }
 
 func main() {
@@ -38,6 +39,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	pusherClient := pusher.Client{
+		AppID: "1827421",
+    Key: "9a15e7a8244c6eb4eb29",
+    Secret: "37cc4e9adf75cbb202c3",
+    Cluster: "ap1",
+    Secure: true,
+  }
 	config := &storage.Config{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("DB_PORT"),
@@ -77,7 +86,8 @@ func main() {
 		c.Locals("session", sess)
 		return c.Next()
 	})
-	r.SetupRoutes(app)
-	app.Static("/images","../client/public/uploads")
-	app.Listen(":8080")
+
+	r.SetupRoutes(app, &pusherClient);
+	app.Static("/images","../client/public/uploads");
+	app.Listen(":8080");
 }

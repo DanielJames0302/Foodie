@@ -12,7 +12,7 @@ interface MessageBoxProps {
 
 const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
   const { currentUser } = useContext(AuthContext);
-  const isOwn = currentUser.username === data.Sender.username;
+  const isOwn = currentUser.ID === data.SenderId;
   const seenList = (data.SeenIds || [])
     .filter((user) => user.username !== data.Sender.username)
     .map((user) => user.name)
@@ -26,11 +26,12 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
       <div className={isOwn ? "message-box-avatar isOwnAvatar": "message-box-avatar"}>
         <Avatar user={data.Sender} />
       </div>
-      <div className="message-body">
+      <div className={isOwn ?" message-body isOwn" : "message-body"}>
           <div className={isOwn ?"message-body-time isOwn" : "message-body-time" }>
             {format(new Date(data.CreatedAt), "p")}
           </div>
-          <div className={isOwn ? "message-body-content isOwnMessage": "message-body-content"}>{data.Body}</div>
+          <div className={isOwn ? "message-body-content isOwnMessage isOwn": "message-body-content"}>
+            <div>{data.Body}</div></div>
 
         {isLast && isOwn && seenList.length > 0 && (
         <div
