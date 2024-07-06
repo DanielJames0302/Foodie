@@ -21,6 +21,7 @@ type Users struct {
 
 	Conversations  []*Conversation `gorm:"many2many:conversation_user;"`
 	SeenMessages 	[]*Message      `gorm:"many2many:message_user;"`
+	Notification 	[]*Notification  `gorm:"many2many:notification_user;"`;
 
 }
 
@@ -34,13 +35,10 @@ type Posts struct {
 
 type Relationships struct {
 	gorm.Model
-	FollowerUserID uint `json:"follower_user_id"`
-	FollowedUserID uint `json:"followed_user_id"`
-	Users Users `gorm:"foreignKey:FollowerUserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Users2 Users `gorm:"foreignKey:FollowedUserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-
-
-
+	MyProfileId uint `json:"my_profile_id"`
+	FriendProfileId uint `json:"friend_profile_id"`
+	Users Users `gorm:"foreignKey:MyProfileId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Users2 Users `gorm:"foreignKey:FriendProfileId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type Likes struct {
@@ -61,7 +59,7 @@ type Comments struct {
 	Posts Posts  `gorm:"foreignKey:PostID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
-type FollowRequests struct {
+type FriendRequests struct {
 	gorm.Model
 	ReceiverProfileId uint `json:"receiver_profile_id"`
 	SenderProfileId 	uint `json:"sender_profile_id"`
@@ -95,7 +93,36 @@ type Conversation struct {
 	
 }
 
+type NotificationType string
+
+const (
+	FriendRequest   NotificationType = "friend_request"
+	AcceptedRequest NotificationType = "accepted_request"
+	Like            NotificationType = "like"
+	Comment         NotificationType = "comment"
+)
+
+type Notification struct {
+	ID               uint           `gorm:"primaryKey"`
+	NotificationType NotificationType `gorm:"not null"`
+	Notification     string         `gorm:"size:255;not null"`
+	Interactions     int            `gorm:"default:1"`
+	Seen             bool           `gorm:"default:false"`
+	PostId           *uint          `gorm:"index;default:null"`
+	CommentId        *uint          `gorm:"index;default:null"`
+	AnswerId         *uint          `gorm:"index;default:null"`
+	ProfileId        uint           `gorm:"index"`
+	SenderProfileId  uint           `gorm:"index"`
+	CreatedAt        time.Time      `gorm:"autoCreateTime"`
+
+	// Define foreign key constraints
+	Profile         Users         `gorm:"foreignKey:ProfileId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	SenderProfile   Users         `gorm:"foreignKey:SenderProfileId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Post            Posts            `gorm:"foreignKey:PostId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Comment         Comments         `gorm:"foreignKey:CommentId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+}
+
 func MigrateBooks(db *gorm.DB) error {
-	err := db.AutoMigrate( &Users{}, &Posts{}, &Relationships{}, &Likes{}, &Comments{}, &FollowRequests{}, &Conversation{}, &Message{})
+	err := db.AutoMigrate( &Users{}, &Posts{}, &Relationships{}, &Likes{}, &Comments{}, &FriendRequests{}, &Conversation{}, &Message{}, &Notification{});
 	return err
 }

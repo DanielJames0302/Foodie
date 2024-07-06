@@ -22,7 +22,6 @@ const ConversationList: React.FC<ConversationListProps> = ({initialItems}) => {
   }, [currentUser.username]);
 
   useEffect(() => {
-    console.log(pusherKey)
     if (!pusherKey) return;
     pusherClient.subscribe(pusherKey);
 
@@ -38,9 +37,7 @@ const ConversationList: React.FC<ConversationListProps> = ({initialItems}) => {
     };
 
     const updateHandler = (conversation: FullConversationType) => {
-      console.log('conversation update')
       setItems((current: any) => current.map((currentConversation: FullConversationType) => {
-        console.log(conversation)
         if (currentConversation.ID === Number(conversation.ID)) {
           return {
             ...currentConversation,
@@ -75,7 +72,7 @@ const ConversationList: React.FC<ConversationListProps> = ({initialItems}) => {
 
   return (
     <div className="conversation-list">
-      <h3>Messages</h3>
+      <h3 className="text-2xl font-bold text-neutral-800">Messages</h3>
       {items?.map((item: FullConversationType, id: number) => (
         <ConversationBox
           key={id}

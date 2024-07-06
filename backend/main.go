@@ -21,7 +21,7 @@ type Repository struct {
 
 
 func (r *Repository) SetupRoutes(app *fiber.App, pusherClient *pusher.Client) {
-
+	routes.PusherRoutes(r.DB,app, pusherClient)
 	routes.AuthRoutes(r.DB, app)
 	routes.PostRoutes(r.DB, app)
 	routes.UploadRoutes(r.DB, app)
@@ -29,9 +29,11 @@ func (r *Repository) SetupRoutes(app *fiber.App, pusherClient *pusher.Client) {
 	routes.LikesRoutes(r.DB,app)
 	routes.UserRoutes(r.DB, app)
 	routes.RelationshipRoutes(r.DB, app)
-	routes.FollowRequestRoutes(r.DB, app)
+	routes.FriendRequestRoutes(r.DB, app)
 	routes.ConversationRoutes(r.DB,app, pusherClient)
 	routes.MessageRoutes(r.DB,app, pusherClient)
+	routes.NotificationRoutes(r.DB, app);
+
 }
 
 func main() {
@@ -75,7 +77,7 @@ func main() {
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:3000",
-		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowHeaders: "Authorization, Origin, Content-Type, Accept",
 		AllowCredentials: true,
 	}))
 	app.Use(func(c *fiber.Ctx) error {

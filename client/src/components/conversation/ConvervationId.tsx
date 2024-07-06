@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { FullConversationType } from "../../interfaces/chat";
 import EmptyState from "../empty_state/EmptyState";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "./Header";
 import CircularProgress from "@mui/material/CircularProgress";
 import Body from "./Body";
@@ -16,6 +16,8 @@ interface ConservationIdProps {
 }
 
 const ConvervationId:React.FC<ConservationIdProps> = ({ conversationId }) => {
+  const navigate = useNavigate();
+
 
   const { data: conversationData, isLoading: conversationIsLoading} = useQuery<FullConversationType, Error, FullConversationType>({
     queryKey: ["conversation", conversationId],
@@ -30,6 +32,15 @@ const ConvervationId:React.FC<ConservationIdProps> = ({ conversationId }) => {
       return res.data as FullConversationType;
     }),
   })
+  useEffect(() => {
+    if (conversationData === undefined) {
+      navigate('/conversations'); 
+    }
+  }, [conversationData]);
+
+  if (conversationData === undefined) {
+    return null; 
+  }
 
  
   return (

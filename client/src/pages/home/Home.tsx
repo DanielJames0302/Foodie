@@ -7,7 +7,7 @@ import RightBar from "../../components/rightbar/RightBar";
 const Home = () => {
   return (
     <div className="home">
-      <div style={{ display: "flex" }}>
+      <div className="flex flex-row gap-2">
        <LeftBar />
         <div style={{ flex: 6 }}>
           <Share />

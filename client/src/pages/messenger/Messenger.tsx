@@ -14,21 +14,20 @@ const Messenger = () => {
   const { isLoading: rIsLoading, data: relationshipData } = useQuery<
   any,
   Error,
-  any
+  User[]
   >({
-  queryKey: ["relationship", currentUser.ID],
+  queryKey: ["relationships", currentUser.ID],
   queryFn: () =>
-    makeRequest.get("/relationships?followedUserId=" + currentUser.ID).then((res) => {
-      return res.data ;
+    makeRequest.get("/relationships").then((res) => {
+      return res.data as User[];
     }),
 });
-  console.log(relationshipData)
   return (
     <Sidebar>
       <div className="messenger">
 
           <div className="chatbox-people">
-            <h3>People</h3>
+            <h3 className="text-2xl font-bold text-neutral-800">People</h3>
             {rIsLoading ? (
               <CircularProgress />
             ) : (

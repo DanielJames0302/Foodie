@@ -23,6 +23,7 @@ const Body: React.FC<BodyProps> = ({initialMessages}) => {
       return makeRequest.post(`/conversations/${conversationId}/seen`)
     }
   })
+ 
 
   useEffect(() => {
     pusherClient.subscribe(conversationId);

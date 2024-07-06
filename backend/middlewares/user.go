@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"net/http"
+	"strings"
 
 	"time"
 
@@ -22,6 +23,20 @@ func IsAuthorized(context *fiber.Ctx, db *gorm.DB) error {
 	accessToken := sess.Get("accessToken")
 
 	token := context.Cookies("token")
+
+	if !(len(token) > 0) {
+		authHeader := context.Get("Authorization")
+    if authHeader == "" {
+        return context.Status(fiber.StatusUnauthorized).SendString("Missing token")
+    }
+
+    // Split the Authorization header to get the token part
+    parts := strings.Split(authHeader, " ")
+    if len(parts) != 2 || parts[0] != "Bearer" {
+        return context.Status(fiber.StatusUnauthorized).SendString("Invalid token format")
+    }
+    token = parts[1]
+	}
 
 	if !(len(token) > 0) && accessToken != nil {
 		return context.Status(http.StatusUnauthorized).JSON(&fiber.Map{"message": "Not logged in"})
