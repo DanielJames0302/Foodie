@@ -6,6 +6,7 @@ import { User } from "../interfaces/user";
 const useOtherUser = (conversation: FullConversationType) => {
   const { currentUser } = useContext(AuthContext);
   const  otherUser = useMemo(() => {
+    if (conversation.ID == 0) return undefined;
     const currentUserEmail = currentUser.email;
     const otherUser = conversation!.Users!.filter((user) => user.email !== currentUserEmail)
     return otherUser[0]

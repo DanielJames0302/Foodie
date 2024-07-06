@@ -1,24 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useOtherUser from "../../hooks/useOtherUser"
 import { FullConversationType } from "../../interfaces/chat";
 import "./Header.scss"
 import { HiChevronLeft, HiEllipsisHorizontal } from "react-icons/hi2";
 import Avatar from "../avatar/Avatar";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProfileDrawer from "./ProfileDrawer";
+import useActiveList from "../../hooks/useActiveList";
 
 
 interface HeaderProps {
   conversation: FullConversationType
 }
 const Header: React.FC<HeaderProps> = ({conversation}) => {
- const otherUser = useOtherUser(conversation);
-  const statusText = 'Active';
+  const otherUser = useOtherUser(conversation);
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
-  if (otherUser === undefined) {
-    return <div></div>
-  }
-
+  const { members } = useActiveList();
+  console.log(members)
+  const  isActive = members.indexOf(otherUser.username) !== -1;
+  const statusText = useMemo(() => {
+    return isActive ? 'Active' : 'Offline';
+  }, [isActive]);
+  
 
   return (
     <>

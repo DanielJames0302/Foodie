@@ -22,6 +22,9 @@ func WithDBAndPusher(fn func(context *fiber.Ctx, db *gorm.DB, pusherClient *push
 		return fn(context, db, pusherClient)
 	}
 }
+func PusherRoutes(db *gorm.DB, app *fiber.App, pusherClient *pusher.Client) {
+	app.Post("/api/pusher/auth",WithDBAndPusher(controllers.PusherAuth,db, pusherClient));
+}
 
 func AuthRoutes (db *gorm.DB, app *fiber.App) {
 	api := app.Group("/api")
@@ -66,19 +69,18 @@ func UserRoutes(db *gorm.DB, app *fiber.App) {
 
 func RelationshipRoutes(db *gorm.DB, app *fiber.App) {
 	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db))
-	api.Post("/relationships", WithDB(controllers.AddRelationship,db))
 	api.Get("/relationships", WithDB(controllers.GetRelationships,db))
 	api.Delete("/relationships", WithDB(controllers.DeleteRelationship,db))
 }
 
-func FollowRequestRoutes(db *gorm.DB, app *fiber.App) {
+func FriendRequestRoutes(db *gorm.DB, app *fiber.App) {
 	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db))
-	api.Post("/send_follow_request/:receiverProfileId", WithDB(controllers.SendFollowRequest, db))
-	api.Post("/accept_follow_request/:senderProfileId", WithDB(controllers.AcceptFollowRequest, db))
-	api.Delete("/decline_follow_request/:senderProfileId", WithDB(controllers.DeclineFollowRequest, db))
-	api.Delete("/cancel_follow_request/:receiverProfileId", WithDB(controllers.CancelFollowRequest, db))
-	api.Get("/follow_requests", WithDB(controllers.GetFollowRequests, db) )
-	api.Get("/sended_follow_requests", WithDB(controllers.GetSendedFollowRequests, db))
+	api.Post("/send_friend_request/:receiverProfileId", WithDB(controllers.SendFriendRequest, db))
+	api.Post("/accept_friend_request/:senderProfileId", WithDB(controllers.AcceptFriendRequest, db))
+	api.Delete("/decline_friend_request/:senderProfileId", WithDB(controllers.DeclineFriendRequest, db))
+	api.Delete("/cancel_friend_request/:receiverProfileId", WithDB(controllers.CancelFriendRequest, db))
+	api.Get("/friend_requests", WithDB(controllers.GetFriendRequests, db) )
+	api.Get("/sended_friend_requests", WithDB(controllers.GetSendedFriendRequests, db))
 }
 
 
@@ -97,3 +99,12 @@ func MessageRoutes(db *gorm.DB, app *fiber.App, pusherClient *pusher.Client) {
 	api.Get("/messages/:conversationId",WithDB(controllers.GetMessages,db));
 	api.Post("/messages", WithDBAndPusher(controllers.CreateMessage,db, pusherClient));
 }
+
+func NotificationRoutes(db *gorm.DB, app *fiber.App) {
+	api:= app.Group("/api", WithDB(middlewares.IsAuthorized,db));
+	api.Post("/notifications/seen", WithDB(controllers.NotificationSeen,db));
+	api.Get("/notifications", WithDB(controllers.GetNotifications,db));
+	api.Get("/notifications/seen", WithDB(controllers.GetUnSeenNotifications,db));
+}
+
+

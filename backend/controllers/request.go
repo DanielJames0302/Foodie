@@ -11,10 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func SendFollowRequest (context *fiber.Ctx, db *gorm.DB) error {
+func SendFriendRequest (context *fiber.Ctx, db *gorm.DB) error {
 	userInfoId := context.Locals("userId").(uint)
 
-	result := models.FollowRequests{}
+	result := models.FriendRequests{}
 	
 	receiverProfileId := context.Params("receiverProfileId")
 	u64_receiverProfileId, err := strconv.ParseUint(receiverProfileId, 10, 64)
@@ -24,7 +24,7 @@ func SendFollowRequest (context *fiber.Ctx, db *gorm.DB) error {
 	}
 	uint_receiverProfileId := uint(u64_receiverProfileId)
 
-	query := db.Model(&models.FollowRequests{}).Select("follow_requests.*").Where("sender_profile_id = ? AND receiver_profile_id = ?", userInfoId, uint_receiverProfileId).First(&result)
+	query := db.Model(&models.FriendRequests{}).Where("sender_profile_id = ? AND receiver_profile_id = ?", userInfoId, uint_receiverProfileId).First(&result)
 
 	if query.RowsAffected > 0 {
 		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Request already sent"})
@@ -33,7 +33,8 @@ func SendFollowRequest (context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Having issues with request"})
 	} 
 	
-	query = db.Where("id = ?", receiverProfileId).Find(&models.Users{})
+	receiverUser := models.Users{};
+	query = db.Where("id = ?", receiverProfileId).Find(&receiverUser);
 
 	if query.RowsAffected == 0 {
 		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "User not found"})
@@ -42,7 +43,7 @@ func SendFollowRequest (context *fiber.Ctx, db *gorm.DB) error {
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
 	}
-	followRequest := models.FollowRequests{}
+	followRequest := models.FriendRequests{}
 	followRequest.ReceiverProfileId = uint_receiverProfileId
 	followRequest.SenderProfileId = userInfoId
 
@@ -51,11 +52,21 @@ func SendFollowRequest (context *fiber.Ctx, db *gorm.DB) error {
 	if err != nil {
 		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Cannot save request"})
 	}
+
+	query_statement := `INSERT INTO notifications (notification_type, notification, profile_id, sender_profile_id)
+		VALUES (?, ?, ?, ?)
+	`;
+
+	query_result := db.Exec(query_statement, "friend_request", fmt.Sprintf("%s has sent you a friend request",receiverUser.Username), followRequest.ReceiverProfileId, followRequest.SenderProfileId);
+
+	if query_result.Error != nil {
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Unable to create send friend request notifcation"});
+	}
 	return context.Status(http.StatusOK).JSON(fiber.Map{"message": "Save request successfully"})
 
 }
 
-func AcceptFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
+func AcceptFriendRequest(context *fiber.Ctx, db *gorm.DB) error {
 	userId := context.Locals("userId").(uint)
 
 	senderProfileId, err := strconv.Atoi(string(context.Params("senderProfileId")))
@@ -64,7 +75,15 @@ func AcceptFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Problem with sender profile id"})
 	}
 
-	query := db.Where("sender_profile_id = ? AND receiver_profile_id = ?", senderProfileId, userId).Find(&models.FollowRequests{})
+	user := models.Users{};
+
+	err = db.First(&user, senderProfileId).Error;
+	
+	if err != nil {
+		return context.Status(http.StatusInternalServerError).SendString("Cannot find sender profile");
+	}
+
+	query := db.Where("sender_profile_id = ? AND receiver_profile_id = ?", senderProfileId, userId).Find(&models.FriendRequests{})
 
 
 	if query.RowsAffected == 0 {
@@ -75,19 +94,35 @@ func AcceptFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
 	}
 
-	query = db.Exec("DELETE FROM follow_requests as fr WHERE fr.sender_profile_id=? AND fr.receiver_profile_id=?", senderProfileId, userId)
+	query = db.Exec("DELETE FROM friend_requests as fr WHERE fr.sender_profile_id=? AND fr.receiver_profile_id=?", senderProfileId, userId)
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
 	}
-	query = db.Exec("INSERT INTO relationships(followed_user_id, follower_user_id) VALUES (?,?)", userId, senderProfileId)
+	query = db.Exec("INSERT INTO relationships(my_profile_id, friend_profile_id) VALUES (?,?)", userId, senderProfileId)
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
 	}
+
+	query = db.Exec("INSERT INTO relationships(my_profile_id, friend_profile_id) VALUES (?,?)", senderProfileId, userId)
+	if query.Error != nil {
+		return context.Status(http.StatusInternalServerError).JSON(query.Error)
+	}
+	query_statement := `INSERT INTO notifications (notification_type, notification, profile_id, sender_profile_id)
+		VALUES (?, ?, ?, ?)
+	`;
+
+	query_result := db.Exec(query_statement, "accept_request",fmt.Sprintf("%s has accepted your friend request",user.Username), senderProfileId, userId);
+
+	if query_result.Error != nil {
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Unable to create accept friend request notifcation"});
+	}
+
+
 	return context.Status(http.StatusOK).JSON(fiber.Map{"message": fmt.Sprintf("You have accepted the follow request from %d", senderProfileId)})
 
 }
 
-func DeclineFollowRequest(context *fiber.Ctx, db*gorm.DB) error {
+func DeclineFriendRequest(context *fiber.Ctx, db*gorm.DB) error {
 	userId := context.Locals("userId").(uint)
 	senderProfileId, err := strconv.Atoi(string(context.Params("senderProfileId")))
 
@@ -95,7 +130,7 @@ func DeclineFollowRequest(context *fiber.Ctx, db*gorm.DB) error {
 		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Problem with sender profile id"})
 	}
 
-	query := db.Exec("DELETE FROM follow_requests WHERE receiver_profile_id = ? AND sender_profile_id = ?", userId, senderProfileId)
+	query := db.Exec("DELETE FROM friend_requests WHERE receiver_profile_id = ? AND sender_profile_id = ?", userId, senderProfileId)
 
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Unable to delete message"})
@@ -105,7 +140,7 @@ func DeclineFollowRequest(context *fiber.Ctx, db*gorm.DB) error {
 
 }
 
-func CancelFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
+func CancelFriendRequest(context *fiber.Ctx, db *gorm.DB) error {
 	userId := context.Locals("userId").(uint)
 	receiverProfileId, err := strconv.Atoi(string(context.Params("receiverProfileId")))
 
@@ -113,7 +148,7 @@ func CancelFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 		return context.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Problem with sender receiver id"})
 	}
 
-	query := db.Exec("DELETE FROM follow_requests WHERE receiver_profile_id = ? AND sender_profile_id = ?", receiverProfileId, userId)
+	query := db.Exec("DELETE FROM friend_requests WHERE receiver_profile_id = ? AND sender_profile_id = ?", receiverProfileId, userId)
 
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)
@@ -123,12 +158,12 @@ func CancelFollowRequest(context *fiber.Ctx, db *gorm.DB) error {
 }
 
 
-func GetFollowRequests (context *fiber.Ctx, db *gorm.DB) error {
+func GetFriendRequests (context *fiber.Ctx, db *gorm.DB) error {
 	userInfoId := context.Locals("userId").(uint)
 
 	results := []models.Users{}
 
-	query_statement := `SELECT u.id, u.username, u.profile_pic FROM follow_requests as fr INNER JOIN users as u ON (fr.sender_profile_id=u.id) WHERE receiver_profile_id = ?`
+	query_statement := `SELECT u.id, u.username, u.profile_pic FROM friend_requests as fr INNER JOIN users as u ON (fr.sender_profile_id=u.id) WHERE receiver_profile_id = ?`
 
 	query := db.Raw(query_statement, userInfoId).Scan(&results)
 
@@ -141,12 +176,12 @@ func GetFollowRequests (context *fiber.Ctx, db *gorm.DB) error {
 }
 
 
-func GetSendedFollowRequests (context *fiber.Ctx, db *gorm.DB) error {
+func GetSendedFriendRequests (context *fiber.Ctx, db *gorm.DB) error {
 	userInfoId := context.Locals("userId").(uint)
 
-	results := []models.FollowRequests{}
+	results := []models.FriendRequests{}
 
-	query := db.Raw("SELECT id, receiver_profile_id FROM follow_requests WHERE sender_profile_id = ?", userInfoId).Scan(&results)
+	query := db.Raw("SELECT id, receiver_profile_id FROM friend_requests WHERE sender_profile_id = ?", userInfoId).Scan(&results)
 
 	if query.Error != nil {
 		return context.Status(http.StatusInternalServerError).JSON(query.Error)

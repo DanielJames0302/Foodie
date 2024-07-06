@@ -41,7 +41,6 @@ const Post = ({ post }: any) => {
     },
 
     onSuccess: () => {
-      // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["likes"] });
     },
   });
@@ -51,13 +50,11 @@ const Post = ({ post }: any) => {
     },
 
     onSuccess: () => {
-      // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
   const handleLike = () => {
-    console.log(data!.some((item) => item.userID === currentUser.ID))
     mutation.mutate(data!.some((item) => item.userID === currentUser.ID));
   };
 

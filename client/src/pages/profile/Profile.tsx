@@ -5,12 +5,13 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
-import { useLocation } from "react-router-dom";
-import { useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/authContext";
 import Update from "../../components/update/Update";
 import { useState } from "react";
 import { AxiosError } from "axios";
+import ProfileButton from "../../components/profileButton/ProfileButton";
 
 interface Relationship {
   userID: number;
@@ -27,16 +28,14 @@ interface User {
 }
 
 const Profile = () => {
-  const [openUpdate, setOpenUpdate] = useState<boolean>(false);
   const { currentUser } = useContext(AuthContext);
-
   const userId = parseInt(useLocation().pathname.split("/")[2]);
+  const navigate = useNavigate();
 
   const { isLoading, error, data } = useQuery<any, Error, User>({
     queryKey: ["user", currentUser.ID],
     queryFn: () =>
       makeRequest.get("/users/find/" + userId).then((res) => {
-        localStorage.setItem("user", JSON.stringify(res.data));
         return res.data as User;
       }),
   });
@@ -44,52 +43,49 @@ const Profile = () => {
   const { isLoading: rIsLoading, data: relationshipData } = useQuery<
     any,
     Error,
-    Relationship[]
+    User[]
   >({
-    queryKey: ["relationship", userId],
+    queryKey: ["relationships", userId],
     queryFn: () =>
-      makeRequest.get("/relationships?followedUserId=" + userId).then((res) => {
-        return res.data as Relationship[];
+      makeRequest.get("/relationships?myProfileId=" + userId).then((res) => {
+        return res.data as User[];
       }),
   });
 
-  const { isLoading: requestIsLoading, data: requestData } = useQuery<any, Error, any>({
-    queryKey: ["followRequests", userId],
-    queryFn: () => makeRequest.get("/sended_follow_requests").then((res) => {
-      return res.data
-    })
-  })
-  console.log(requestData)
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: (following: boolean) => {
-      if (following)
-        return makeRequest.delete("/relationships?userId=" + userId);
-      return makeRequest.post("/send_follow_request/" + userId);
-    },
-
-    onSuccess: () => {
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ["relationship", userId] });
-    },
-    onError: (err: AxiosError) => {
-      console.log(err)
-    }
+  const { isLoading: sentRequestIsLoading, data: sentRequestData } = useQuery<
+    any,
+    Error,
+    any
+  >({
+    queryKey: ["friendSentRequests", userId],
+    queryFn: () =>
+      makeRequest.get("/sended_friend_requests").then((res) => {
+        return res.data;
+      }),
   });
-
-  const handleFollow = () => {
-    console.log(
-      relationshipData!.some(
-        (item: Relationship) => item.userID === currentUser.ID
-      )
-    );
-    mutation.mutate(
-      relationshipData!.some(
-        (item: Relationship) => item.userID === currentUser.ID
-      )
-    );
+  const { isLoading: requestIsLoading, data: requestData } = useQuery<
+    any,
+    Error,
+    any
+  >({
+    queryKey: ["friendRequests", userId],
+    queryFn: () =>
+      makeRequest.get("/friend_requests").then((res) => {
+        return res.data;
+      }),
+  });
+  const userBoxMutation = useMutation({
+    mutationFn: (data: User) => {
+      return makeRequest.post('/conversations', { userId: data.ID });
+    },
+    onSuccess(data) {
+      navigate('/conversations/' + data.data.ID)
+    },
+  }) 
+  const hanldeClick = () => {
+    userBoxMutation.mutate(data);
   };
+
 
   return (
     <div className="profile">
@@ -98,9 +94,21 @@ const Profile = () => {
       ) : (
         <>
           <div className="images">
-            <img src={data?.coverPic ? "/uploads/" + data?.coverPic : "/images/default-cover.png" } alt="" className="cover" />
             <img
-              src={data?.profilePic ? "/uploads/" + data?.profilePic : "/images/default-user.jpg"}
+              src={
+                data?.coverPic
+                  ? "/uploads/" + data?.coverPic
+                  : "/images/default-cover.png"
+              }
+              alt=""
+              className="cover"
+            />
+            <img
+              src={
+                data?.profilePic
+                  ? "/uploads/" + data?.profilePic
+                  : "/images/default-user.jpg"
+              }
               alt=""
               className="profilePic"
             />
@@ -118,36 +126,20 @@ const Profile = () => {
               <div className="center">
                 <span>{data?.name}</span>
 
-                {rIsLoading ? (
+                {rIsLoading || requestIsLoading || sentRequestIsLoading ? (
                   "loading"
-                ) : userId === currentUser.ID ? (
-                  <button onClick={() => setOpenUpdate(true)}>update</button>
-                ) : (
-                  <button onClick={handleFollow}>
-                    {relationshipData?.some(
-                      (item) => item.userID === currentUser.ID
-                    )
-                      ? "Following"
-                      :requestData?.some((item: any) => item.receiver_profile_id === userId) ? "Follow request sent" : "Follow"}
-                  </button>
-                )}
+                ) : <ProfileButton relationshipData={relationshipData} requestData={requestData} sentRequestData={sentRequestData} /> 
+                }
               </div>
-              <div className="right">
+              {userId !== currentUser.ID ? <div className="right" onClick={hanldeClick}>
                 <EmailOutlinedIcon />
-                <MoreVertIcon />
-              </div>
+              </div>: <div className="right"><MoreVertIcon/> </div>}
             </div>
             <Posts userId={userId} />
           </div>
         </>
       )}
-      {openUpdate && (
-        <Update
-          setOpenUpdate={setOpenUpdate}
-          openUpdate={openUpdate}
-          user={data}
-        />
-      )}
+     
     </div>
   );
 };

@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import { AuthContextProvider } from "./context/authContext";
 import { RouterProvider } from "react-router-dom";
 import router from "./router/router";
+import ActiveStatus from "./components/active/ActiveStatus";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -16,6 +17,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <AuthContextProvider>
+      <ActiveStatus/>
       <RouterProvider router={router} />
     </AuthContextProvider>
   </React.StrictMode>

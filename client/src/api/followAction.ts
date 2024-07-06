@@ -30,14 +30,14 @@ export const fetchFollowRequests = async () => {
 
 export const handldeFollowRequests = async ({sender_profile_id, option}: HandleFriendRequestParams) => {
   if (option === 'accept') {
-    const response = await makeRequest.post(`/accept_follow_request/${sender_profile_id}`)
+    const response = await makeRequest.post(`/accept_friend_request/${sender_profile_id}`)
     if (response.status !== 200) {
       toast('Network response not ok')
     }
     toast(`You have accepted follow request`)
     return;
   }
-  const response = await makeRequest.delete(`/decline_follow_request/${sender_profile_id}`)
+  const response = await makeRequest.delete(`/decline_friend_request/${sender_profile_id}`)
   if (response.status !== 200) {
     toast('Something went wrong')
   }
