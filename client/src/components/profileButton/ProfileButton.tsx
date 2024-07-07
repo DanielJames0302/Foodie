@@ -21,17 +21,17 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({
   const [isOpenUpdate, setIsOpenUpdate] = useState<boolean>(false);
   const isFriend = useMemo(() => {
     return relationshipData?.some((item: User) => item.ID === userId);
-  }, [relationshipData]);
+  }, [relationshipData, userId]);
   const isRequestSended = useMemo(() => {
     return sentRequestData?.some(
       (item: any) => item.receiver_profile_id === userId
     );
-  }, [sentRequestData]);
+  }, [sentRequestData, userId]);
   const hasRequestFromThisProfile = useMemo(() => {
     return requestData?.some(
       (item: any) => item.receiver_profile_id === currentUser.ID
     );
-  }, [requestData]);
+  }, [requestData, currentUser.ID]);
 
   
   const queryClient = useQueryClient();

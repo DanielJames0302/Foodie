@@ -5,8 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { FullConversationType } from "../../interfaces/chat";
 import CircularProgress from "@mui/material/CircularProgress";
-import { ConversationContext, ConversationContextProvider } from "../../context/conversationContext";
-import { useContext } from "react";
+
+
 import ChatBox from "../../components/conversation/ChatBox";
 
 
@@ -22,7 +22,7 @@ const ConversationLayout = () => {
 
   return (
     <Sidebar>
-      <ConversationContextProvider>
+    
         <div className="conversation-layout">
           {isLoading ? (
             <CircularProgress />
@@ -33,7 +33,7 @@ const ConversationLayout = () => {
           <ChatBox />
 
         </div>
-      </ConversationContextProvider>
+    
     </Sidebar>
   );
 };

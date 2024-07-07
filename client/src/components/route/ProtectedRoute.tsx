@@ -1,6 +1,6 @@
-import { PropsWithChildren, useContext } from "react"
+import { useContext } from "react"
 import { AuthContext } from "../../context/authContext"
-import { Navigate, useNavigate } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

@@ -6,7 +6,7 @@ import useOtherUser from "../../hooks/useOtherUser";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import Avatar from "../avatar/Avatar";
-import { ConversationContext } from "../../context/conversationContext";
+
 
 interface ConversationBoxProps {
   data: FullConversationType;
@@ -17,14 +17,14 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
   data,
   selected,
 }) => {
-  const { setCurrentChat } = useContext(ConversationContext);
+
   const { currentUser } = useContext(AuthContext);
   const otherUser = useOtherUser(data);
   const navigate = useNavigate();
   const handleClick = useCallback(() => {
-    setCurrentChat(data);
+
     navigate("/conversations/" + data.ID);
-  }, [data.ID]);
+  }, [data.ID, navigate]);
 
   const lastMessage = useMemo(() => {
     const messages = data.Messages || [];

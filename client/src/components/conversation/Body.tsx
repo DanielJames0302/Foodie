@@ -3,10 +3,9 @@ import { FullMessageType } from '../../interfaces/chat'
 import './Body.scss'
 import useConversation from '../../hooks/useConversation'
 import MessageBox from './MessageBox'
-import { useQuery } from '@tanstack/react-query'
 import { makeRequest } from '../../axios'
 import { pusherClient } from '../../libs/pusher'
-import {find, update} from 'lodash'
+import {find} from 'lodash'
 
 interface BodyProps {
   initialMessages: FullMessageType[]
@@ -17,12 +16,11 @@ const Body: React.FC<BodyProps> = ({initialMessages}) => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { conversationId } = useConversation();
-  const { data, isLoading} = useQuery<any, Error, any>({
-    queryKey: ["conversation_seen", conversationId],
-    queryFn: () => {
-      return makeRequest.post(`/conversations/${conversationId}/seen`)
-    }
-  })
+  useEffect(() => {
+    makeRequest.post(`/conversations/${conversationId}/seen`);
+  }, [conversationId]);
+
+
  
 
   useEffect(() => {

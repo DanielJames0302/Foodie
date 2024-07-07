@@ -1,5 +1,3 @@
-import cluster from "cluster"
-import Cookies from 'js-cookie';
 import PusherClient from "pusher-js"
 
 

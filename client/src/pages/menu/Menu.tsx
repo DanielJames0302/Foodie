@@ -7,7 +7,7 @@ import RowContainer from "../../components/row_container/RowContainer"
 
 const Menu = () => {
   const [filter, setFilter] = useState("");
-  const [foodItems, setFoodItems] = useState(heroData);
+  const foodItems = heroData;
   return (
     <section className="w-full my-6" id="menu">
     <div className="w-full flex flex-col items-center justify-center">

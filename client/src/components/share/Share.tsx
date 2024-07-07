@@ -6,7 +6,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
-import { Button, ButtonGroup, Dropdown } from "react-bootstrap";
+
 const Share = () => {
   const [file, setFile] = useState<File>();
   const [desc, setDesc] = useState("");

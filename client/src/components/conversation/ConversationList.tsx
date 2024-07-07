@@ -15,7 +15,7 @@ interface ConversationListProps {
 const ConversationList: React.FC<ConversationListProps> = ({initialItems}) => {
   const {currentUser} = useContext(AuthContext);
   const [items, setItems] = useState<FullConversationType[]>(initialItems);
-  const { conversationId, isOpen} = useConversation();
+  const { conversationId } = useConversation();
   const navigate = useNavigate();
   const pusherKey = useMemo(() => {
     return currentUser.username;
