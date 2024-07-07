@@ -3,7 +3,6 @@ import { makeRequest } from "../../axios";
 import "./update.scss";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { AuthContext } from "../../context/authContext";
 
 interface Props {

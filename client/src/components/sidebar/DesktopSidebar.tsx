@@ -1,4 +1,3 @@
-import { useState } from "react"
 import "./desktop-sidebar.scss"
 import useRoutes from "../../hooks/useRoutes";
 import DesktopItem from "./DesktopItem";
@@ -7,12 +6,11 @@ import DesktopItem from "./DesktopItem";
 
 const DesktopSidebar = () => {
   const routes = useRoutes();
-  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="desktop-sidebar">
         <nav>
-          <ul
-            role="list"
+          <div
+          
           >
             {
               routes.map((item) => (
@@ -27,7 +25,7 @@ const DesktopSidebar = () => {
               ))
             }
 
-          </ul>
+          </div>
         </nav>
     </div>
   )

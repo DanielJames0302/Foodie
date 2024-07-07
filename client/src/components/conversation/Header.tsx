@@ -1,10 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useOtherUser from "../../hooks/useOtherUser"
 import { FullConversationType } from "../../interfaces/chat";
 import "./Header.scss"
 import { HiChevronLeft, HiEllipsisHorizontal } from "react-icons/hi2";
 import Avatar from "../avatar/Avatar";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ProfileDrawer from "./ProfileDrawer";
 import useActiveList from "../../hooks/useActiveList";
 

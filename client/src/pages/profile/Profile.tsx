@@ -3,19 +3,13 @@ import PlaceIcon from "@mui/icons-material/Place";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
-import Update from "../../components/update/Update";
-import { useState } from "react";
-import { AxiosError } from "axios";
 import ProfileButton from "../../components/profileButton/ProfileButton";
 
-interface Relationship {
-  userID: number;
-}
 
 interface User {
   ID: number;
@@ -32,7 +26,7 @@ const Profile = () => {
   const userId = parseInt(useLocation().pathname.split("/")[2]);
   const navigate = useNavigate();
 
-  const { isLoading, error, data } = useQuery<any, Error, User>({
+  const { isLoading , data } = useQuery<any, Error, User>({
     queryKey: ["user", currentUser.ID],
     queryFn: () =>
       makeRequest.get("/users/find/" + userId).then((res) => {

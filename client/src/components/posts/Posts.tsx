@@ -1,4 +1,4 @@
-import Post from "../post/Post";
+import PostItem from "../post/Post";
 import "./posts.scss";
 import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
@@ -40,7 +40,7 @@ const Posts: React.FC<Props> = ({ userId }) => {
         ? "Something went wrong!"
         : isLoading
         ? "loading"
-        : data!.map((post: Post, index: number) => <Post post={post} key={index} />)}
+        : data!.map((post: Post, index: number) => <PostItem post={post} key={index} />)}
     </div>
   );
 };

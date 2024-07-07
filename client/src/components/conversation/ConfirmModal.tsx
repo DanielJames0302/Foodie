@@ -1,8 +1,6 @@
-
 import { useCallback, useState } from 'react'
 import { DialogTitle } from '@headlessui/react'
 import { FiAlertTriangle } from 'react-icons/fi'
-import axios from 'axios';
 import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
 import useConversation from '../../hooks/useConversation';

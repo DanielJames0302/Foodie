@@ -4,8 +4,8 @@ import { fetchSearchingResults } from "../../api/searchAction";
 import { User } from "../../interfaces/user";
 import SearchIcon from "@mui/icons-material/Search";
 import "./searchProfile.scss";
-import { Dropdown, DropdownItem } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Dropdown } from "react-bootstrap";
+
 
 const SearchProfile = () => {
   const searchRef = useRef<HTMLDivElement | null>(null);
@@ -13,7 +13,7 @@ const SearchProfile = () => {
   const [searchedProfileName, setSearchedProfileName] =
     useState<string>("");
 
-  const { data, isLoading, isError } = useQuery<any, Error, User[]>({
+  const { data } = useQuery<any, Error, User[]>({
     queryKey: ["searchProfile", searchedProfileName],
     queryFn: () => fetchSearchingResults(searchedProfileName),
   });

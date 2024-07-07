@@ -29,12 +29,7 @@ const Form = () => {
     submitMutation.mutate({body: data.message, conversationId: Number(conversationId), image: ""});
   };
 
-  const handleUpload = (result: any) => {
-    makeRequest.post("/messages", {
-      image: result.info.secure_url,
-      conversationId: conversationId,
-    });
-  };
+
   return (
     <div className="form">
       <HiPhoto size={30} className="hi-photo" />

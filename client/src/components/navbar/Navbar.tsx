@@ -1,16 +1,10 @@
 import "./navbar.scss";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
 
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
-import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 import SearchProfile from "../search_profile/SearchProfile";
 import Notification from "./Notification";
@@ -31,7 +25,6 @@ const Navbar = () => {
         <SearchProfile />
       </div>
       <div className="right">
-        <PersonOutlinedIcon />
         <Link
           to={`/conversations`}
           style={{ textDecoration: "none", color: "inherit" }}
@@ -39,7 +32,7 @@ const Navbar = () => {
           <EmailOutlinedIcon />
         </Link>
 
-        <Notification/>
+        <Notification />
         <div className="user">
           <Link
             to={`/profile/${currentUser.ID}`}

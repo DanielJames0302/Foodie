@@ -2,8 +2,6 @@ import {
   Outlet,
 } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
-import LeftBar from "./components/leftbar/LeftBar";
-import RightBar from "./components/rightbar/RightBar";
 import "./style.scss";
 
 import {

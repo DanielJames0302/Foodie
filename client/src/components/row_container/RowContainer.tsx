@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { MdAdsClick } from "react-icons/md";
 import { motion } from "framer-motion";
 interface RowContainerProps {
@@ -61,7 +61,7 @@ const RowContainer:React.FC<RowContainerProps> = ({flag, data, scrollValue}) => 
       ))
     ) : (
       <div className="w-full flex flex-col items-center justify-center">
-        <img src={`/images/NotFound.svg`} className="h-340" />
+        <img src={`/images/NotFound.svg`} className="h-340" alt="product" />
         <p className="text-xl text-headingColor font-semibold my-2">
           Items Not Available
         </p>

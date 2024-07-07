@@ -4,7 +4,6 @@ import {
   handldeFollowRequests,
 } from "../../api/followAction";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useCallback } from "react";
 import { makeRequest } from "../../axios";
 import Avatar from "../avatar/Avatar";
 
@@ -26,12 +25,9 @@ const FriendRequests = () => {
     },
   });
 
-  const handleFollowRequests = useCallback(
-    (sender_profile_id: number, option: string) => {
+  const handleFollowRequests = (sender_profile_id: number, option: string) => {
       acceptMutation.mutate({ sender_profile_id, option });
-    },
-    []
-  );
+    };
 
   return (
     <div className="item">

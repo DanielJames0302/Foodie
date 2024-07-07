@@ -1,5 +1,4 @@
 import Posts from "../../components/posts/Posts";
-import Share from "../../components/share/Share";
 import "./home.scss";
 import LeftBar from "../../components/leftbar/LeftBar";
 import RightBar from "../../components/rightbar/RightBar";
@@ -15,6 +14,7 @@ const Home = () => {
       <div className="flex flex-row gap-2">
         <LeftBar />
         <div style={{ flex: 6 }}>
+          <div className="flex justify-center">
           <Link to={"/share"}>
             <button className="btn bg-green-500 hover:bg-green-400 flex flex-row gap-3 mb-2 p-2">
               <img
@@ -24,14 +24,16 @@ const Home = () => {
                     : `/images/default-user.jpg`
                 }
                 alt=""
-                className="h-6 w-6"
+                className="h-8 w-8 object-cover"
               />
-              <span className="text-white font-bold">
-                Do you have new recipe in your mind {currentUser.name} ?
+              <span className="text-white font-light">
+                Do you have a new recipe in your mind <strong>{currentUser.name}</strong>?
               </span>
               <IoNavigateCircleOutline className="text-white h-6 w-6" />
             </button>
           </Link>
+          </div>
+         
 
      
           <Posts userId={null} />

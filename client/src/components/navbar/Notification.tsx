@@ -1,4 +1,4 @@
-import { Button, OverlayTrigger, Popover, Tooltip } from "react-bootstrap";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext } from "react";
@@ -7,7 +7,7 @@ import { makeRequest } from "../../axios";
 
 const Notification = () => {
   const { currentUser } = useContext(AuthContext);
-  const { data: notifications, isLoading } = useQuery<any, Error, any>({
+  const { data: notifications } = useQuery<any, Error, any>({
     queryKey: ["notifications", currentUser.ID],
     queryFn: async () => {
       return await makeRequest.get("/notifications").then((res) => {
