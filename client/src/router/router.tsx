@@ -8,6 +8,8 @@ import Login from "../pages/login/Login";
 import Register from "../pages/register/Register";
 import Messenger from "../pages/messenger/Messenger";
 import ConversationLayout from "../pages/conversation/ConversationLayout";
+import Menu from "../pages/menu/Menu";
+import Share from "../components/share/Share";
 
 
 const router = createBrowserRouter([
@@ -38,6 +40,14 @@ const router = createBrowserRouter([
       {
         path: "/conversations/:conversationId",
         element: <ConversationLayout />
+      },
+      {
+        path: "/menu",
+        element: <Menu/>
+      },
+      {
+        path: "/share",
+        element: <Share/>
       }
      
     ],

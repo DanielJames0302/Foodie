@@ -44,11 +44,11 @@ const Notification = () => {
   const popover = (
 
     <Popover id="popover-basic">
-      <Popover.Header as="h3">You notifications</Popover.Header>
+      <Popover.Header as="h3">Your notifications</Popover.Header>
       <Popover.Body>
         <div className="flex flex-col gap-2">
-        {notifications?.map((item: any) => (
-          <div className="hover:bg-slate-300 p-2 rounded-lg">
+        {notifications?.map((item: any, id: number) => (
+          <div key={id} className="hover:bg-slate-300 p-2 rounded-lg">
             {item.Notification}
           </div>
         ))}
@@ -60,7 +60,7 @@ const Notification = () => {
   const handleClickNotification = () => {
     notificationMutation.mutate();
   }
-  console.log(notifications)
+
   return (
     <div className="relative" onClick={handleClickNotification}>
       <OverlayTrigger placement={"bottom-start"} overlay={popover} trigger="click">
