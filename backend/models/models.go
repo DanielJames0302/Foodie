@@ -6,8 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-
-
 type Users struct {
 	gorm.Model
 	Username			string		`json:"username"`
@@ -27,10 +25,15 @@ type Users struct {
 
 type Posts struct {
 	gorm.Model
+	Title				string `json:"title"`
 	Desc 				string `json:"desc"`
-	Img 				string `json:"img"`
-	UserID			uint `json:"userID"`
-	Users Users `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	ImgUrl 			string `json:"imgUrl"`
+	VidUrl			string  `json:"vidUrl"`
+	Category		string  `json:"category"`
+	Calories		float32 `json:"calories"`
+	UserID			uint    `json:"userID"`
+	Type        string  `json:"type"`
+	User Users `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type Relationships struct {
