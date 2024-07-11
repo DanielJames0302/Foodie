@@ -12,13 +12,13 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
+import { Image } from "cloudinary-react";
 
 interface User {
   userID: string;
 }
 
 const Post = ({ post }: any) => {
-
   const [commentOpen, setCommentOpen] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
@@ -37,7 +37,7 @@ const Post = ({ post }: any) => {
   const mutation = useMutation({
     mutationFn: (liked: boolean) => {
       if (liked) return makeRequest.delete("/likes?postId=" + post.ID);
-      return makeRequest.post("/likes?postId=" + post.ID );
+      return makeRequest.post("/likes?postId=" + post.ID);
     },
 
     onSuccess: () => {
@@ -59,38 +59,57 @@ const Post = ({ post }: any) => {
   };
 
   const handleDelete = () => {
-    if (!post.ID) return 
+    if (!post.ID) return;
     deleteMutation.mutate(post.ID);
   };
-
-
+  
   return (
     <div className="post">
       <div className="container">
         <div className="user">
           <div className="userInfo">
-            <img src={"/uploads/" + post.user_profile_pic} alt="" />
+            <img src={"/uploads/" + post.User.profilePic} alt="" />
             <div className="details">
               <Link
                 to={`/profile/${post.user_id}`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
-                <span className="name">{post.user_username}</span>
+                <span className="name">{post.User.username}</span>
               </Link>
               <span className="date">{moment(post.CreatedAt).fromNow()}</span>
             </div>
           </div>
           <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
           {menuOpen && post.userId === currentUser.id && (
-            <button onClick={handleDelete}>delete</button>
+            <button className="absolute top-[30px] right-0 cursor-pointer btn bg-red-400 hover:bg-red-300 text-white p-2" onClick={handleDelete}>delete</button>
           )}
         </div>
-        <div className="content">
+        <div className="flex flex-col mt-2">
+          <div className="flex flex-row">
+            <span className="bg-red-100 text-red-500 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-500 border border-red-500 w-20 text-center h-8 flex items-center justify-center">
+              {post.type}
+            </span>
+            {post.type === "Recipe" && (
+              <span className="bg-blue-100 text-blue-500 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-500 border border-blue-500 w-20 text-center h-8 flex items-center justify-center">
+                {post.category}
+              </span>
+            )}
+             {post.type === "Recipe" && (
+              <span className="bg-green-100 text-green-500 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-500 border border-green-500 w-22 text-center h-8 flex items-center justify-center">
+                Calories: {post.calories} 
+              </span>
+            )}
+          </div>
+          <p className="text-2xl font-bold">{post.title}</p>
           <p>{post.desc}</p>
-          <img src={"/uploads/" + post.img} alt="" />
+          {post.imgUrl && <Image
+            alt="No image shown"
+            cloudName="dgkyhspuf"
+            publicId={`https://res.cloudinary.com/dgkyhspuf/image/upload/${post.imgUrl}.png`}
+          />}
         </div>
-        <div className="info">
-          <div className="item">
+        <div className="info flex items-center gap-5 mt-2">
+          <div className="flex items-center gap-2 text-xs cursor-pointer">
             {isLoading ? (
               "loading"
             ) : data?.some((item) => item.userID === currentUser.ID) ? (
@@ -103,11 +122,11 @@ const Post = ({ post }: any) => {
             )}
             {data?.length} Likes
           </div>
-          <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
+          <div className="flex items-center gap-2 text-xs cursor-pointer" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
             See Comments
           </div>
-          <div className="item">
+          <div className="flex items-center gap-2 text-xs cursor-pointer">
             <ShareOutlinedIcon />
             Share
           </div>

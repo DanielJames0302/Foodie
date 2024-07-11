@@ -10,6 +10,7 @@ import Messenger from "../pages/messenger/Messenger";
 import ConversationLayout from "../pages/conversation/ConversationLayout";
 import Menu from "../pages/menu/Menu";
 import Share from "../components/share/Share";
+import PostLayout from "../pages/post/PostLayout";
 
 
 const router = createBrowserRouter([
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "/share",
         element: <Share/>
+      },
+      {
+        path: "/post/:postId",
+        element: <PostLayout />
       }
      
     ],

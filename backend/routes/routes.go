@@ -37,6 +37,8 @@ func AuthRoutes (db *gorm.DB, app *fiber.App) {
 func PostRoutes(db *gorm.DB, app *fiber.App) {
 	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db))
 	api.Get("/posts",  WithDB(controllers.GetPost, db))
+	api.Get("/posts/food",WithDB(controllers.GetFoodPost,db))
+	api.Get("/post/:postId",WithDB(controllers.GetPostById,db))
 	api.Post("/posts", WithDB(controllers.AddPost, db))
 	api.Delete("/posts", WithDB(controllers.DeletePost, db))
 }
