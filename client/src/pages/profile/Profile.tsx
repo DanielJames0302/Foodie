@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import ProfileButton from "../../components/profileButton/ProfileButton";
+import { triggerErrorMessage } from "../../utils/locals";
 
 
 interface User {
@@ -75,6 +76,9 @@ const Profile = () => {
     onSuccess(data) {
       navigate('/conversations/' + data.data.ID)
     },
+    onError: () => {
+      triggerErrorMessage();
+    }
   }) 
   const hanldeClick = () => {
     userBoxMutation.mutate(data);

@@ -22,6 +22,7 @@ const Menu = () => {
           return response.data;
         });
     },
+    
   });
   return (
     <section className="w-full my-6" id="menu">
