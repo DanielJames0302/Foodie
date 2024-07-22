@@ -99,7 +99,7 @@ const Profile = () => {
                   : "/images/default-cover.png"
               }
               alt=""
-              className="cover w-full h-full object-cover"
+              className="cover w-full h-full object-contain"
             />
             <img
               src={
@@ -133,7 +133,13 @@ const Profile = () => {
                 <EmailOutlinedIcon />
               </div>: <div className="flex-1 flex items-center justify-end gap-2"><MoreVertIcon/> </div>}
             </div>
-            <Posts userId={userId} />
+            <div className="flex items-center justify-center">
+              <div className="w-2/4">
+              <Posts userId={userId} />  
+              </div>
+              
+            </div>
+            
           </div>
         </>
       )}
