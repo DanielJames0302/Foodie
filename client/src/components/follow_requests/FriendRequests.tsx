@@ -30,17 +30,17 @@ const FriendRequests = () => {
     };
 
   return (
-    <div className="item">
+    <div className="bg-white shadow-md p-[20px] mb-[20px]">
       {isLoading ? (
         <CircularProgress />
       ) : (
         <div>
           <span>Friend Requests</span>
           {data?.map((user: User, id: number) => (
-            <div className="user" key={id}>
-              <div className="userInfo">
+            <div className="flex items-center justify-between mx-[20px] my-[0px]" key={id}>
+              <div className="flex items-center gap-[20px] relative">
                 <Avatar user={user}/>
-                <span>{user.username}</span>
+                <span className="font-bold">{user.username}</span>
               </div>
               <div className="flex flex-row gap-1">
                 <button className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-2 border-b-4 border-blue-700 hover:border-blue-500 rounded" onClick={() => handleFollowRequests(user.ID, "accept")}>

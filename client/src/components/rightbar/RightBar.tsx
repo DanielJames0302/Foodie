@@ -1,4 +1,3 @@
-import "./rightBar.scss";
 import FollowRequests from "../follow_requests/FriendRequests";
 import { User } from "../../interfaces/user";
 import { makeRequest } from "../../axios";
@@ -21,19 +20,19 @@ const RightBar = () => {
   });
 
   return (
-    <div className="rightBar">
-      <div className="container">
+    <div className="flex-[3] sticky top-[70px] h-[calc(100vh - 70px)] overflow-scroll overflow-y-hidden bg-gray-100 mobile:hidden tablet:hidden">
+      <div className="flex flex-col">
         <FollowRequests />
 
-        <div className="item">
-          <span>Friends</span>
+        <div className="shadow-lg p-[20px] mb-[20px] bg-white">
+          <span className="font-light">Friends</span>
           {rIsLoading ? (
             <CircularProgress />
           ) : (
             relationshipData.map((friend, id: number) => (
-              <div className="friend" key={id}>
+              <div key={id}>
                 <Link to={'/profile/' + friend.ID}>
-                <div className="friendInfo flex flex-row gap-4">
+                <div className="flex flex-row gap-4">
                   <Avatar user={friend} />
                   <span className="text-black">{friend.name}</span>
                 </div>
