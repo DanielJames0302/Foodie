@@ -1,4 +1,3 @@
-import "./leftBar.scss";
 import { AuthContext } from "../../context/authContext";
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,25 +21,25 @@ const LeftBar = () => {
   }
 
   return (
-    <div className="leftBar">
-      <div className="container">
-        <div className="menu">
-          <div className="user">
-            <img src={currentUser.profilePic ? "/uploads/" + currentUser.profilePic : `/images/default-user.jpg`} alt="" />
+    <div className="flex-[2] sticky top-[70px] h-[calc(100vh-70px)] bg-white text-gray-200 mobile:hidden">
+      <div className="p-[20px] ">
+        <div className="flex flex-col gap-[20px]">
+          <div className="flex items-center gap-[10px]">
+            <img className="w-[50px] h-[50px] rounded-full object-cover" src={currentUser.profilePic ? "/uploads/" + currentUser.profilePic : `/images/default-user.jpg`} alt="" />
             <Link
               to={`/profile/${currentUser.ID}`}
               style={{ textDecoration: "none", color: "inherit" }}
             >
-                <span>{currentUser.name}</span>
+                <span className="text-lg font-bold text-black">{currentUser.name}</span>
             </Link>
           
           </div>
           
         </div>
-        <hr />
+        <hr className="mx-[20px] my-[0px] border-none h-[0.5px] bg-slate-100"/>
     
        
-        <div className="menu">
+        <div className="menu flex flex-col gap-[20px] ">
   
           <Button variant="danger" onClick={handleLogout}>Logout</Button>{' '}
         </div>

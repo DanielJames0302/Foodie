@@ -1,5 +1,4 @@
 import Posts from "../../components/posts/Posts";
-import "./home.scss";
 import LeftBar from "../../components/leftbar/LeftBar";
 import RightBar from "../../components/rightbar/RightBar";
 import { useContext } from "react";
@@ -10,10 +9,10 @@ import { Link } from "react-router-dom";
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
   return (
-    <div className="home">
+    <div className="px-[20px] py-[70px] bg-gray-100 min-h-screen mobile:p-[10px] tablet:p-[20px]">
       <div className="flex flex-row gap-2">
         <LeftBar />
-        <div style={{ flex: 6 }}>
+        <div className="flex-[6]">
           <div className="flex justify-center">
             <Link to={"/share"}>
               <button className="btn bg-green-500 hover:bg-green-400 flex flex-row gap-3 mb-2 p-2">
