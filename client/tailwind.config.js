@@ -42,7 +42,11 @@ module.exports = {
         lg: "1024px",
         xl: "1280px",
         "2xl": "1536px",
+        "mobile": {"max" :"480px"},
+        "tablet": {"max": "960px"},
+
       },
+   
       colors: {
         headingColor: "#2e2e2e",
         textColor: "#515151",

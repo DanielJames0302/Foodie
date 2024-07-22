@@ -86,12 +86,12 @@ const Profile = () => {
 
 
   return (
-    <div className="profile">
+    <div className="bg-black-200">
       {isLoading ? (
         "loading"
       ) : (
         <>
-          <div className="images">
+          <div className="w-full h-[300px] relative mb-2">
             <img
               src={
                 data?.coverPic
@@ -99,7 +99,7 @@ const Profile = () => {
                   : "/images/default-cover.png"
               }
               alt=""
-              className="cover"
+              className="cover w-full h-full object-cover"
             />
             <img
               src={
@@ -108,12 +108,12 @@ const Profile = () => {
                   : "/images/default-user.jpg"
               }
               alt=""
-              className="profilePic"
+              className="profilePic w-[200px] h-[200px] rounded-xl object-cover absolute left-0 right-0 m-auto top-[200px]"
             />
           </div>
-          <div className="profileContainer">
-            <div className="uInfo">
-              <div className="left">
+          <div className="px-5 py-5 mobile:p-5 tablet:p-8">
+            <div className="h-[180px] shadow-xl p-[50px] flex flex-row items-center justify-between mb-[20px] mobile:flex mobile:flex-col mobile:h-[30vh] mobile:p-5 mobile:mt-24">
+              <div className="flex-1 flex flex-row gap-2 tablet:flex-wrap">
                 <div className="info">
                   <div className="item">
                     <PlaceIcon />
@@ -121,17 +121,17 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-              <div className="center">
-                <span>{data?.name}</span>
+              <div className="flex-1 flex flex-col items-center gap-2">
+                <span className="text-xl font-bold">{data?.name}</span>
 
                 {rIsLoading || requestIsLoading || sentRequestIsLoading ? (
                   "loading"
                 ) : <ProfileButton relationshipData={relationshipData} requestData={requestData} sentRequestData={sentRequestData} /> 
                 }
               </div>
-              {userId !== currentUser.ID ? <div className="right" onClick={hanldeClick}>
+              {userId !== currentUser.ID ? <div className="flex-1 flex items-center justify-end gap-2" onClick={hanldeClick}>
                 <EmailOutlinedIcon />
-              </div>: <div className="right"><MoreVertIcon/> </div>}
+              </div>: <div className="flex-1 flex items-center justify-end gap-2"><MoreVertIcon/> </div>}
             </div>
             <Posts userId={userId} />
           </div>
