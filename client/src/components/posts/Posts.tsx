@@ -35,7 +35,7 @@ const Posts: React.FC<Props> = ({ userId }) => {
 
   return (
   
-    <div className="posts">
+    <div className="flex flex-col gap-[50px]">
        {error
         ? "Something went wrong!"
         : isLoading
