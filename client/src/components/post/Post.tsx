@@ -1,4 +1,3 @@
-import "./post.scss";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
@@ -64,19 +63,19 @@ const Post = ({ post }: any) => {
   };
   
   return (
-    <div className="post shadow-xl rounded-3xl bg-white text-gray-200">
-      <div className="container p-[20px]">
-        <div className="user flex item-center justify-between relative ">
-          <div className="userInfo flex gap-[20px]">
+    <div className="shadow-xl rounded-3xl bg-white text-black">
+      <div className="p-[20px]">
+        <div className="flex item-center justify-between relative ">
+          <div className="flex gap-[20px]">
             <img className="w-[40px] h-[40px] rounded-full object-contain" src={"/uploads/" + post.User.profilePic} alt="" />
             <div className="details flex flex-col ">
               <Link
                 to={`/profile/${post.user_id}`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
-                <span className="name font-bold">{post.User.username}</span>
+                <span className="font-bold">{post.User.username}</span>
               </Link>
-              <span className="date text-sm">{moment(post.CreatedAt).fromNow()}</span>
+              <span className="text-sm">{moment(post.CreatedAt).fromNow()}</span>
             </div>
           </div>
           <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />

@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { fetchSearchingResults } from "../../api/searchAction";
 import { User } from "../../interfaces/user";
 import SearchIcon from "@mui/icons-material/Search";
-import "./searchProfile.scss";
 import { Dropdown } from "react-bootstrap";
 
 
@@ -37,17 +36,17 @@ const SearchProfile = () => {
  
 
   return (
-    <div ref={searchRef} className="search">
-      <div className="search-bar">
+    <div ref={searchRef}>
+      <div className="flex items-center gap-[10px] rounded-xl p-[5px] bg-white text-black">
         <SearchIcon />
         <input
           type="text"
           placeholder="Search..."
-          className="search-input"
+          className="border-none w-[500px] bg-white text-black outline-none mobile:hidden tablet:w-[200px]"
           onChange={(e) => setSearchedProfileName(e.target.value)}
         />
       </div>
-      <div className="search-results-list">
+      <div>
         {isShowResult && !hasResults && searchedProfileName !== "" ? (
           <Dropdown className="w-100" show autoClose={false}>
             <Dropdown.Menu className=" w-100 my-1">
@@ -61,17 +60,17 @@ const SearchProfile = () => {
             <Dropdown.Menu className=" w-100 my-1">
               {data?.map((user: User, id: number) => (
                 <Dropdown.Item href= {`/profile/${user.ID}`} eventKey={id} key={id}>
-                  <div className="searched-user">
+                  <div className="flex items-center gap-[10px] font-bold text-black">
                       <img
                         src={
                           user.profilePic
                             ? "/uploads/" + user.profilePic
                             : `/images/default-user.jpg`
                         }
-                        className="searched-user-image"
+                        className="searched-user-image w-[30px] h-[30px] rounded-full object-cover"
                         alt=""
                       />
-                      <span className="searched-user-name">
+                      <span className="text-black ml-[10px]">
                         {user.name}
                       </span>
                   </div>

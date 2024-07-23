@@ -6,7 +6,6 @@ import Header from "./Header";
 import CircularProgress from "@mui/material/CircularProgress";
 import Body from "./Body";
 import Form from "./Form";
-import './ConversationId.scss'
 import { useEffect } from "react";
 
 interface ConservationIdProps {
@@ -42,7 +41,7 @@ const ConvervationId:React.FC<ConservationIdProps> = ({ conversationId }) => {
 
  
   return (
-    <div className="conversationId">
+    <div className="h-full flex flex-col">
       {!conversationIsLoading && conversationData !== undefined ? <Header conversation={conversationData}/> : <CircularProgress/>}
       {!messageIsLoading ? <Body initialMessages={messageData}/> : <CircularProgress />}
       <Form />

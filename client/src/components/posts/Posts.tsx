@@ -1,5 +1,4 @@
 import PostItem from "../post/Post";
-import "./posts.scss";
 import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 

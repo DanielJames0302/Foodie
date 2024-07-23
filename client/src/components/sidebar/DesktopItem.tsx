@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import './desktop-item.scss'
+import clsx from "clsx";
 
 interface DesktopItemProps {
   label: string;
@@ -22,8 +22,22 @@ const DesktopItem:React.FC<DesktopItemProps> = ({
   }
   return (
     <div onClick={handleClick}>
-        <Link className={active ? "desktop-item-link active" : "desktop-item-link"} to={href}>
-          <Icon className="icon-image"/>
+        <Link className={clsx(`
+            group 
+            flex 
+            gap-x-3 
+            rounded-md 
+            p-3 
+            text-sm 
+            leading-6 
+            font-semibold 
+            text-gray-500 
+            hover:text-black 
+            hover:bg-gray-100
+          `,
+            active && 'bg-gray-100 text-black'
+          )} to={href}>
+          <Icon className="h-[15px] w-[15px]"/>
         </Link>
     </div>
   )

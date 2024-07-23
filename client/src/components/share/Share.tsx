@@ -1,4 +1,3 @@
-import "./share.scss";
 import Image from "../../assets/img.png";
 import { useCallback, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -81,9 +80,7 @@ const Share = () => {
     e.preventDefault();
     let imgUrl = "";
     if (file) imgUrl = await uploadImage(file);
-    console.log(imgUrl)
     mutation.mutate({ ...postData, imgUrl: imgUrl });
-    console.log(imgUrl);
     setFile(undefined)
     window.location.reload()
   }, [file, mutation, postData])

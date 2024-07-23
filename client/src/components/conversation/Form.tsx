@@ -1,6 +1,5 @@
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import useConversation from "../../hooks/useConversation";
-import "./Form.scss";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { HiPaperAirplane, HiPhoto } from "react-icons/hi2";
@@ -31,9 +30,17 @@ const Form = () => {
 
 
   return (
-    <div className="form">
-      <HiPhoto size={30} className="hi-photo" />
-      <form onSubmit={handleSubmit(onSubmit)} action="">
+    <div className="py-4 
+        px-4 
+        bg-white 
+        border-t 
+        flex 
+        items-center 
+        gap-2 
+        lg:gap-4 
+        w-full">
+      <HiPhoto size={30} className="text-sky-500" />
+      <form className="flex items-center gap-2 lg:gap-4 w-full" onSubmit={handleSubmit(onSubmit)} action="">
         <MessageInput
           id="message"
           register={register}
@@ -42,8 +49,15 @@ const Form = () => {
           placeholder={"Write a message"}
         />
 
-        <button type="submit" className="submit-btn">
-          <HiPaperAirplane size={18} className="submit-icon" />
+        <button type="submit" className="
+            rounded-full 
+            p-2 
+            bg-sky-500 
+            cursor-pointer 
+            hover:bg-sky-600 
+            transition
+          ">
+          <HiPaperAirplane size={18} className="text-white" />
         </button>
       </form>
     </div>

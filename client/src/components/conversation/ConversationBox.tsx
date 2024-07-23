@@ -1,12 +1,11 @@
 import { useCallback, useContext, useMemo } from "react";
 import { format } from "date-fns";
-import "./ConversationBox.scss";
 import { FullConversationType } from "../../interfaces/chat";
 import useOtherUser from "../../hooks/useOtherUser";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import Avatar from "../avatar/Avatar";
-
+import clsx from "clsx";
 
 interface ConversationBoxProps {
   data: FullConversationType;
@@ -17,12 +16,10 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
   data,
   selected,
 }) => {
-
   const { currentUser } = useContext(AuthContext);
   const otherUser = useOtherUser(data);
   const navigate = useNavigate();
   const handleClick = useCallback(() => {
-
     navigate("/conversations/" + data.ID);
   }, [data.ID, navigate]);
 
@@ -63,22 +60,47 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 
   return (
     <div
-      className={selected ? `conversation-box selected` : `conversation-box`}
+      className={clsx(
+        `
+        w-full 
+        relative 
+        flex 
+        items-center 
+        space-x-3 
+        p-3 
+        hover:bg-neutral-100
+        rounded-lg
+        transition
+        cursor-pointer
+        `,
+        selected ? "bg-neutral-100" : "bg-white"
+      )}
       onClick={handleClick}
     >
       <Avatar user={otherUser} />
-      <div className="conversation-box-info">
-        <div className="conversation-box-info-top">
-          <strong>{data.Name || otherUser.name}</strong>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center justify-between">
+          <p className="text-md font-medium text-gray-900">{data.Name || otherUser.name}</p>
           {lastMessage?.CreatedAt && (
-            <div>{format(new Date(lastMessage.CreatedAt), "p")}</div>
+            <div
+              className=" text-xs 
+                  text-gray-400 
+                  font-light
+                  ml-5px"
+            >
+              {format(new Date(lastMessage.CreatedAt), "p")}
+            </div>
           )}
         </div>
 
         <div
-          className={
-            hasSeen ? "conversation-box-info-bottom hasSeen" : "conversation-box-info-bottom"
-          }
+          className={clsx(
+            `
+              truncate 
+              text-sm
+              `,
+            hasSeen ? "text-gray-500" : "text-black font-medium"
+          )}
         >
           {lastMessageText}
         </div>
