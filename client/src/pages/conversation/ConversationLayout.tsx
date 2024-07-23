@@ -1,5 +1,4 @@
 import Sidebar from "../../components/sidebar/Sidebar";
-import "./ConversationLayout.scss";
 import ConversationList from "../../components/conversation/ConversationList";
 import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
@@ -23,7 +22,7 @@ const ConversationLayout = () => {
   return (
     <Sidebar>
     
-        <div className="conversation-layout">
+        <div className="h-full ml-[10px] flex">
           {isLoading ? (
             <CircularProgress />
           ) : (
