@@ -1,4 +1,3 @@
-import "./messenger.scss";
 import UserList from "../../components/userlist/UserList";
 import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
@@ -24,9 +23,9 @@ const Messenger = () => {
 });
   return (
     <Sidebar>
-      <div className="messenger">
+      <div className="h-full ml-[10px] flex relative">
 
-          <div className="chatbox-people">
+          <div className="flex-[3] p-[10px]">
             <h3 className="text-2xl font-bold text-neutral-800">People</h3>
             {rIsLoading ? (
               <CircularProgress />
@@ -34,7 +33,7 @@ const Messenger = () => {
               <UserList items={relationshipData} />
             )}
           </div>
-          <div className="chat-conversation">
+          <div className="flex-[9] flex items-center justify-center h-full text-3xl text-gray-50 cursor-default">
             Select a person to start conversation
           </div>
       </div>

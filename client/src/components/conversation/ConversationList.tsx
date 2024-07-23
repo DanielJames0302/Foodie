@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { FullConversationType } from "../../interfaces/chat"
 import useConversation from "../../hooks/useConversation";
 import ConversationBox from "./ConversationBox";
-import "./ConversationList.scss"
 import { AuthContext } from "../../context/authContext";
 import { pusherClient } from "../../libs/pusher";
 import { find } from "lodash";
@@ -71,7 +70,7 @@ const ConversationList: React.FC<ConversationListProps> = ({initialItems}) => {
   }, [pusherKey, conversationId, navigate]);
 
   return (
-    <div className="conversation-list">
+    <div className="flex-[3] p-[10px]">
       <h3 className="text-2xl font-bold text-neutral-800">Messages</h3>
       {items?.map((item: FullConversationType, id: number) => (
         <ConversationBox

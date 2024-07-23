@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import "./register.scss";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 
@@ -35,18 +34,18 @@ const Register = () => {
 
 
   return (
-    <div className="register">
-      <div className="card">
-        <div className="left">
-          <h1>Foodie</h1>
-          <span>Do you have an account?</span>
+    <div className="h-screen bg-green-500 flex items-center justify-center">
+      <div className="w-2/4 flex flex-row-reverse bg-white rounded-sm min-h-[600px] overflow-hidden">
+        <div className="flex-1 bg-login-background bg-cover p-[50px] flex flex-col gap-[30px] text-white">
+          <h1 className="text-3xl">Foodie</h1>
+          <span className="text-lg">Do you have an account?</span>
           <Link to="/login">
-            <button>Login</button>
+            <button className="w-2/4 p-[10px] border-none bg-white font-bold cursor-pointer text-green-500">Login</button>
           </Link>
         </div>
-        <div className="right">
-          <h1>Register</h1>
-          <form>
+        <div className="flex-1 p-[50px] flex gap-[50px] flex-col justify-center">
+          <h1 className="text-black">Register</h1>
+          <form className="flex flex-col gap-[30px] *:border-none *:border-b-black *:p-4 *:outline-none *:bg-slate-50">
             <input
               type="text"
               placeholder="Username"
@@ -72,8 +71,8 @@ const Register = () => {
               onChange={handleChange}
             />
             {err && err}
-            <button onClick={handleClick}>Register</button>
           </form>
+          <button className="w-2/4 p-[10px] border-none bg-green-500 text-white font-bold cursor-pointer" onClick={handleClick}>Register</button>
         </div>
       </div>
     </div>

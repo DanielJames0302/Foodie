@@ -61,6 +61,9 @@ module.exports = {
         background: "white",
         textColor: "whiteSmoke"
       },
+      backgroundImage: {
+        'login-background': "url('./assets/login-background.jpg')",
+      },
     },
   },
   plugins: [require("tailwind-scrollbar")],

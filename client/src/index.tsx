@@ -2,7 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import ReactDOM from "react-dom/client";
-import "./index.css";
+import "./index.css"
 import reportWebVitals from "./reportWebVitals";
 import { AuthContextProvider } from "./context/authContext";
 import { RouterProvider } from "react-router-dom";
@@ -10,16 +10,20 @@ import router from "./router/router";
 import ActiveStatus from "./components/active/ActiveStatus";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+const queryClient = new QueryClient();
 root.render(
   <React.StrictMode>
-    <AuthContextProvider>
-      <ActiveStatus/>
-      <RouterProvider router={router} />
-    </AuthContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthContextProvider>
+        <ActiveStatus />
+        <RouterProvider router={router} />
+      </AuthContextProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 
