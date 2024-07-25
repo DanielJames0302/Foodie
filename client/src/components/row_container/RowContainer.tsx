@@ -17,7 +17,6 @@ const RowContainer: React.FC<RowContainerProps> = ({
   scrollValue,
 }) => {
   const rowContainer = useRef<HTMLDivElement>(null);
-  console.log(data[0]);
 
   useEffect(() => {
     rowContainer.current.scrollLeft += scrollValue;
@@ -64,7 +63,7 @@ const RowContainer: React.FC<RowContainerProps> = ({
             </div>
 
             <div className="w-full flex flex-col items-end justify-end -mt-6">
-              <p className="text-textColor font-semibold text-base md:text-lg">
+              <p className="text-black font-semibold text-base md:text-lg">
                 {item?.title}
               </p>
               <p className="mt-1 text-sm text-gray-500">

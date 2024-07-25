@@ -6,6 +6,7 @@ import RowContainer from "../../components/row_container/RowContainer";
 import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import CircularProgress from "@mui/material/CircularProgress";
+import { triggerErrorMessage } from "../../utils/locals";
 
 const Menu = () => {
   const [filter, setFilter] = useState("");
@@ -19,11 +20,16 @@ const Menu = () => {
       return makeRequest
         .get("/posts/food?filter=" + filter)
         .then((response) => {
+          if (response.status !== 200) {
+            triggerErrorMessage()
+            return
+          }
           return response.data;
         });
     },
-    
+
   });
+
   return (
     <section className="w-full my-6" id="menu">
       <div className="w-full flex flex-col items-center justify-center">
@@ -54,11 +60,7 @@ const Menu = () => {
                   />
                 </div>
                 <p
-                  className={`text-sm ${
-                    filter === category.name
-                      ? "text-white"
-                      : "text-textColor"
-                  } group-hover:text-white`}
+                  className="text-sm text-black"
                 >
                   {category.name}
                 </p>

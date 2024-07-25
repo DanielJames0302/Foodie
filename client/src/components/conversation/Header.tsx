@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
   const otherUser = useOtherUser(conversation);
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const { members } = useActiveList();
-  console.log(members);
+
   const isActive = members.indexOf(otherUser.username) !== -1;
   const statusText = useMemo(() => {
     return isActive ? "Active" : "Offline";

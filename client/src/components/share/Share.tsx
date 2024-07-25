@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import axios from "axios";
 import { categories } from "../../utils/data";
+import { triggerErrorMessage } from "../../utils/locals";
 
 
 const Share = () => {
@@ -30,7 +31,7 @@ const Share = () => {
       );
       return response.data.public_id;
     } catch (err) {
-      console.log(err);
+      triggerErrorMessage()
     }
   };
 
@@ -39,7 +40,6 @@ const Share = () => {
 
   const mutation = useMutation({
     mutationFn: (newPost: any) => {
-      console.log(newPost)
       return makeRequest.post("/posts", newPost);
     },
 
@@ -52,7 +52,6 @@ const Share = () => {
   const selectFile = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     const selectedFiles = files as FileList;
-    console.log(selectedFiles)
     setFile(selectedFiles?.[0]);
   },[]);
 
