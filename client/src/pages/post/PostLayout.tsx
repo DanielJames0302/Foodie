@@ -5,7 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Post from "../../components/post/Post";
 const PostLayout = () => {
   const { postId } = useParams();
-  console.log(postId);
+
   const { data, isLoading } = useQuery<any, Error, any>({
     queryKey: ["post", postId],
     queryFn: async () => {
@@ -14,7 +14,7 @@ const PostLayout = () => {
       });
     },
   });
-  console.log(data);
+
   return (
     <div className="flex items-center justify-center">
       <div className="w-2/4 mt-2">{isLoading ? <CircularProgress /> : <Post post={data} />}</div>

@@ -8,10 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type CommentInfo struct {
-	models.Comments
-	models.Users
-}
+
 
 type CommentPayload struct {
 	PostID string `json:"postID"`
@@ -19,19 +16,13 @@ type CommentPayload struct {
 
 func GetComments(context *fiber.Ctx, db *gorm.DB) error {
 	
-	results := []CommentInfo{}
-	fields := `users.id AS user_id,
-	users.profile_pic AS user_profile_pic,
-	users.name AS user_name,
-	comments.*`
-
-
+	results := []models.Comments{}
 	postID := context.Query("postId")
-	err := db.Model(&models.Comments{}).Select(fields).
+	err := db.Model(&models.Comments{}).
 		Joins("INNER JOIN users ON comments.user_id = users.id").
 		Where("comments.post_id = ?", postID).
-		Order("comments.created_at").
-		Scan(&results).Error
+		Order("comments.created_at").Preload("Users").
+		Find(&results).Error
 
 	if err != nil {
 		context.Status(http.StatusNotFound).JSON(&fiber.Map{"message": "Cannot found comments"})
@@ -59,7 +50,7 @@ func AddComment(context *fiber.Ctx, db *gorm.DB) error {
 	result := db.Create(&commentModel)
 
 	if result.Error != nil {
-		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Cannot create comment"})
+		return context.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": "Unable create comment"})
 	}
 
 	return context.Status(http.StatusOK).JSON(&fiber.Map{"messge": "Comment has been created succesfully"})

@@ -3,6 +3,7 @@ import { makeRequest } from "../../axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { AuthContext } from "../../context/authContext";
+import { triggerErrorMessage } from "../../utils/locals";
 
 interface Props {
   user: any;
@@ -41,7 +42,7 @@ const Update = ({ openUpdate, setOpenUpdate, user }: Props) => {
       const res = await makeRequest.post("/upload", formData);
       return res.data;
     } catch (err) {
-      console.log(err);
+      triggerErrorMessage()
     }
   };
 

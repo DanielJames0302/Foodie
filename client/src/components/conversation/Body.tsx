@@ -39,7 +39,6 @@ const Body: React.FC<BodyProps> = ({initialMessages}) => {
     }
 
     const updateMessageHandler = (newMessaage: FullMessageType) => {
-      console.log('update')
       setMessages((current: any) => current.map((currentMessage: any)=> {
         if (currentMessage.ID === newMessaage.ID) {
           return newMessaage;
