@@ -63,10 +63,10 @@ func LikesRoutes(db *gorm.DB, app *fiber.App) {
 }
 
 func UserRoutes(db *gorm.DB, app *fiber.App) {
-	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db), WithDB(middlewares.UserById,db))
-	api.Get("/users/find/:userId", WithDB(controllers.GetUser,db))
+	api := app.Group("/api", WithDB(middlewares.IsAuthorized, db))
+	api.Get("/users/find/:userId", WithDB(middlewares.UserById, db), WithDB(controllers.GetUser,db))
 	api.Put("/users", WithDB(controllers.UpdateUser,db))
-	api.Post("/users/search_profile", WithDB(controllers.SearchUser, db))
+	api.Get("/users/search_profile", WithDB(controllers.SearchUser, db))
 }
 
 func RelationshipRoutes(db *gorm.DB, app *fiber.App) {

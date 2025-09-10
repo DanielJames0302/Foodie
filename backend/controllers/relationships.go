@@ -23,7 +23,7 @@ func GetRelationships(context *fiber.Ctx, db *gorm.DB) error {
 	var results []models.Users
 	userId := context.Locals("userId").(uint);
 
-	err := db.Model(&models.Relationships{}).Select("relationships.my_profile_id, users.name, users.profile_pic, users.id").Joins("LEFT JOIN users ON relationships.friend_profile_id = users.id").Where("relationships.my_profile_id = ?",  userId).Find(&results).Error
+	err := db.Model(&models.Relationships{}).Select("relationships.my_profile_id, users.name, users.username, users.profile_pic, users.id").Joins("LEFT JOIN users ON relationships.friend_profile_id = users.id").Where("relationships.my_profile_id = ?",  userId).Find(&results).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

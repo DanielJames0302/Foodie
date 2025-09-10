@@ -1,8 +1,6 @@
 import useRoutes from "../../hooks/useRoutes";
 import DesktopItem from "./DesktopItem";
 
-
-
 const DesktopSidebar = () => {
   const routes = useRoutes();
   return (

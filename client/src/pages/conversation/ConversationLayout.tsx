@@ -21,18 +21,17 @@ const ConversationLayout = () => {
 
   return (
     <Sidebar>
-    
-        <div className="h-full ml-[10px] flex">
-          {isLoading ? (
+      <div className="h-full w-full flex overflow-hidden">
+        {isLoading ? (
+          <div className="flex items-center justify-center flex-1">
             <CircularProgress />
-          ) : (
-            <ConversationList initialItems={data || []} />
-          )}
-         
-          <ChatBox />
-
-        </div>
-    
+          </div>
+        ) : (
+          <ConversationList initialItems={data || []} />
+        )}
+       
+        <ChatBox />
+      </div>
     </Sidebar>
   );
 };

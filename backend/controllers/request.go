@@ -163,7 +163,7 @@ func GetFriendRequests (context *fiber.Ctx, db *gorm.DB) error {
 
 	results := []models.Users{}
 
-	query_statement := `SELECT u.id, u.username, u.profile_pic FROM friend_requests as fr INNER JOIN users as u ON (fr.sender_profile_id=u.id) WHERE receiver_profile_id = ?`
+	query_statement := `SELECT u.id, u.username, u.name, u.profile_pic FROM friend_requests as fr INNER JOIN users as u ON (fr.sender_profile_id=u.id) WHERE receiver_profile_id = ?`
 
 	query := db.Raw(query_statement, userInfoId).Scan(&results)
 

@@ -17,7 +17,7 @@ const Update = ({ openUpdate, setOpenUpdate, user }: Props) => {
   const [profile, setProfile] = useState<File>();
   const [texts, setTexts] = useState({
     email: user?.email,
-    password: user?.password,
+    password: "",
     name: user?.name,
     city: user?.city,
     website: user?.website,
@@ -71,100 +71,100 @@ const Update = ({ openUpdate, setOpenUpdate, user }: Props) => {
     let profileUrl;
     coverUrl = cover ? await upload(cover) : user?.coverPic;
     profileUrl = profile ? await upload(profile) : user?.profilePic;
-    mutation.mutate({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
+    const payload: any = { ...texts, coverPic: coverUrl, profilePic: profileUrl };
+    if (!payload.password) {
+      delete payload.password;
+    }
+    mutation.mutate(payload);
     setOpenUpdate(false);
     setCover(undefined);
     setProfile(undefined);
   };
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen  flex items-center justify-center z-50">
-      <div className="m-auto w-2/4 h-3/4 bg-white p-[50px] z-40 flex flex-col gap-[20px] shadow-xl relative mobile:w-full mobile:h-full ">
-        <h1 className="font-light mobile:text-sm">Update Your Profile</h1>
-        <form className="flex flex-col gap-[5px] h-1/4">
-          <div className="flex flex-wrap gap-[50px]">
-            <label className="flex flex-col gap-[10px] text-black text-lg"  htmlFor="cover">
-              <span>Cover Picture</span>
-              <div className="relative ">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="relative w-full max-w-xl rounded-lg bg-white p-6 shadow-xl">
+        <h1 className="mb-4 text-lg font-semibold text-slate-800">Update your profile</h1>
+        <form className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <label className="flex flex-col gap-2 text-sm" htmlFor="cover">
+              <span className="text-slate-600">Cover picture</span>
+              <div className="relative overflow-hidden rounded-md border">
                 <img
-                  className="w-[100px] h-[100px] object-cover"
-                  src={
-                    cover
-                      ? URL.createObjectURL(cover)
-                      : "/uploads/" + user?.coverPic
-                  }
-                  alt=""
+                  className="h-24 w-full object-cover"
+                  src={cover ? URL.createObjectURL(cover) : (user?.coverPic ? "/uploads/" + user?.coverPic : "/images/default-cover.png")}
+                  alt="cover"
                 />
-                <CloudUploadIcon className="absolute top-0 bottom-0 left-0 right-0 m-auto text-2xl font-light cursor-pointer" />
+                <CloudUploadIcon className="absolute right-2 top-2 cursor-pointer text-slate-600" />
               </div>
             </label>
-            <input
-              className="p-[5px] border-none border-b-black font-light bg-transparent"
-              type="file"
-              id="cover"
-              style={{ display: "none" }}
-              onChange={selectCoverFile}
-            />
-            <label className="flex flex-col gap-[10px] text-black text-lg"  htmlFor="profile">
-              <span>Profile Picture</span>
-              <div className="relative">
+            <input className="hidden" type="file" id="cover" onChange={selectCoverFile} />
+
+            <label className="flex flex-col gap-2 text-sm" htmlFor="profile">
+              <span className="text-slate-600">Profile picture</span>
+              <div className="relative flex items-center gap-3 rounded-md border p-2">
                 <img
-                 className="w-[100px] h-[100px] object-cover"
-                  src={
-                    profile
-                      ? URL.createObjectURL(profile)
-                      : "/uploads/" + user?.profilePic
-                  }
-                  alt=""
+                  className="h-16 w-16 rounded-md object-cover"
+                  src={profile ? URL.createObjectURL(profile) : (user?.profilePic ? "/uploads/" + user?.profilePic : "/images/default-user.jpg")}
+                  alt="profile"
                 />
-                <CloudUploadIcon className="absolute top-0 bottom-0 left-0 right-0 m-auto text-2xl font-light cursor-pointer" />
+                <CloudUploadIcon className="cursor-pointer text-slate-600" />
               </div>
             </label>
+            <input className="hidden" type="file" id="profile" onChange={selectProfileFile} />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-600">Email</label>
             <input
-              className="p-[5px] border-none border-b-black text-black bg-transparent"
-              type="file"
-              id="profile"
-              style={{ display: "none" }}
-              onChange={selectProfileFile}
+              className="w-full rounded-md border border-slate-300 bg-slate-50 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              type="email"
+              value={texts.email}
+              name="email"
+              onChange={handleChange}
             />
           </div>
-          <label className="flex flex-col gap-[10px] text-black text-lg"  >Email</label>
-          <input
-            className="p-[5px] border-none border-b-black text-black bg-transparent"
-            type="text"
-            value={texts.email}
-            name="email"
-            onChange={handleChange}
-          />
-          <label className="flex flex-col gap-[10px] text-black text-lg"  >Password</label>
-          <input
-            className="p-[5px] border-none border-b-black text-black bg-transparent"
-            type="text"
-            value={texts.password}
-            name="password"
-            onChange={handleChange}
-          />
-          <label className="flex flex-col gap-[10px] text-black text-lg"  >Name</label>
-          <input
-            className="p-[5px] border-none border-b-black text-black bg-transparent"
-            type="text"
-            value={texts.name}
-            name="name"
-            onChange={handleChange}
-          />
-          <label className="flex flex-col gap-[10px] text-black text-lg"  >Country / City</label>
-          <input
-            className="p-[5px] border-none border-b-black text-black bg-transparent"
-            type="text"
-            name="city"
-            value={texts.city}
-            onChange={handleChange}
-          />
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-600">Password</label>
+            <input
+              className="w-full rounded-md border border-slate-300 bg-slate-50 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              type="password"
+              placeholder="Leave blank to keep current password"
+              value={texts.password}
+              name="password"
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-600">Name</label>
+            <input
+              className="w-full rounded-md border border-slate-300 bg-slate-50 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              type="text"
+              value={texts.name}
+              name="name"
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-600">Country / City</label>
+            <input
+              className="w-full rounded-md border border-slate-300 bg-slate-50 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              type="text"
+              name="city"
+              value={texts.city}
+              onChange={handleChange}
+            />
+          </div>
 
-          <button className="border-none p-[10px] cursor-pointer text-white bg-blue-400" onClick={handleClick}>Update</button>
+          <div className="flex justify-end gap-2 pt-2">
+            <button type="button" className="rounded-md border px-4 py-2 text-sm text-slate-600 hover:bg-slate-50" onClick={() => setOpenUpdate(false)}>
+              Cancel
+            </button>
+            <button className="rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600" onClick={handleClick}>Update</button>
+          </div>
         </form>
-        <button className="absolute top-[10px] right-[20px] border-none bg-red-500 p-[5px] cursor-pointer text-white" onClick={() => setOpenUpdate(false)}>
-          X
+        <button className="absolute right-3 top-3 rounded-md p-1 text-slate-500 hover:bg-slate-100" onClick={() => setOpenUpdate(false)}>
+          ×
         </button>
       </div>
     </div>

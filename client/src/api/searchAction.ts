@@ -1,15 +1,24 @@
 import { makeRequest } from "../axios"
 
-
 export const fetchSearchingResults = async (name: string) => {
-  const response = await makeRequest.post("/users/search_profile?name=" + name);
-
-  if (response.status !== 200) {
-    throw Error("Some thing went wrong")
+  if (!name.trim()) {
+    return [];
   }
 
-  if (!response.data) {
-    throw Error("data is undefined")
+  console.log("Searching for:", name);
+
+  try {
+    const response = await makeRequest.get("/users/search_profile?name=" + encodeURIComponent(name.trim()));
+    
+    console.log("Search response:", response);
+
+    if (response.status !== 200) {
+      throw new Error("Search request failed");
+    }
+
+    return response.data || [];
+  } catch (error) {
+    console.error("Search error:", error);
+    throw new Error("Unable to search users");
   }
-  return response.data
 }

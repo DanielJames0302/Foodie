@@ -41,9 +41,11 @@ const ConvervationId:React.FC<ConservationIdProps> = ({ conversationId }) => {
 
  
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex flex-col h-full">
       {!conversationIsLoading && conversationData !== undefined ? <Header conversation={conversationData}/> : <CircularProgress/>}
-      {!messageIsLoading ? <Body initialMessages={messageData}/> : <CircularProgress />}
+      <div className="flex-1 w-full">
+        {!messageIsLoading ? <Body initialMessages={messageData}/> : <CircularProgress />}
+      </div>
       <Form />
     </div>
   )

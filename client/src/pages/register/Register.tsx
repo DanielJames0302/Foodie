@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
+import { getAxiosErrorMessage } from "../../utils/error";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     username: "",
     email: "",
     password: "",
     name: "",
   });
-  const [err, setErr] = useState<string>();
+  const [err, setErr] = useState<string>("");
 
   const handleChange = (e: any) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -19,17 +22,21 @@ const Register = () => {
     mutationFn: (inputs: Object) => {
       return axios.post("http://localhost:8080/api/auth/register", inputs);
     },
-  
+    onError: (error: unknown) => {
+      setErr(getAxiosErrorMessage(error, "Unable to register. Please try again."));
+    },
   })
 
   const handleClick = async (e: any) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/api/auth/register", inputs);
-    } catch (err: any) {
-      setErr(err.message);
-    } 
-    registerMutation.mutate(inputs)
+      await registerMutation.mutateAsync(inputs);
+      setErr("");
+      navigate("/login");
+    } catch (error) {
+      // onError will set the message; keep here just in case mutateAsync throws
+      setErr(getAxiosErrorMessage(error, "Unable to register. Please try again."));
+    }
   };
 
 
@@ -70,7 +77,7 @@ const Register = () => {
               name="name"
               onChange={handleChange}
             />
-            {err && err}
+            {err && <p className="text-red-400">{err}</p>}
           </form>
           <button className="w-2/4 p-[10px] border-none bg-green-500 text-white font-bold cursor-pointer" onClick={handleClick}>Register</button>
         </div>

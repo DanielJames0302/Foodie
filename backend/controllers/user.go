@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
-
 
 	"github.com/DanielJames0302/Foodie/models"
 
@@ -56,17 +56,27 @@ func UpdateUser(context *fiber.Ctx, db *gorm.DB) error {
 
 func SearchUser(context *fiber.Ctx, db *gorm.DB) error {
 	param_name := context.Query("name")
-	user := []models.Users{}
+	users := []models.Users{}
+
+	// Debug logging
+	fmt.Printf("Search query received: '%s'\n", param_name)
 
 	if param_name == "" {
 		return context.Status(http.StatusOK).JSON([]models.Users{})
 	}
 
-	query := db.Raw("SELECT username, id, name, profile_pic FROM users WHERE name LIKE ? LIMIT 20",param_name + "%").Scan(&user)
+	// Search both name and username with case-insensitive matching
+	searchPattern := "%" + param_name + "%"
+	query := db.Where("name ILIKE ? OR username ILIKE ?", searchPattern, searchPattern).
+		Select("id, username, name, profile_pic, email, city").
+		Limit(20).
+		Find(&users)
+	
 	if query.Error != nil {
-		return context.Status(http.StatusInternalServerError).JSON(query.Error)
+		fmt.Printf("Database error: %v\n", query.Error)
+		return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "Unable to search users", "error": query.Error.Error()})
 	}
 
-	return  context.Status(http.StatusOK).JSON(user)
-
+	fmt.Printf("Found %d users\n", len(users))
+	return context.Status(http.StatusOK).JSON(users)
 }

@@ -6,13 +6,15 @@ const ChatBox = () => {
   const { conversationId } = useConversation()
   
   return (
-    <div className="flex-[9] relative h-full">
+    <div className="flex-[9] h-full flex flex-col overflow-hidden">
           {conversationId ? (
             <ConservationId conversationId = {conversationId} />
           ) : (
-            <span className="absolute top-1/4 left-1/4 text-2xl text-gray-200 cursor-default">
-            Open a conversation to start a chat.
-          </span>
+            <div className="flex-1 flex items-center justify-center w-full">
+              <span className="text-2xl text-gray-200 cursor-default">
+                Open a conversation to start a chat.
+              </span>
+            </div>
           )}
      
     </div>

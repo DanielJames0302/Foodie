@@ -30,14 +30,17 @@ const UserBox: React.FC<UserBoxProps> = ({ data }) => {
           flex 
           items-center 
           space-x-3 
-          p-3 
-          hover:bg-green-500
-          rounded-lg
+          p-2 
+          hover:bg-slate-50
+          rounded-md
           cursor-pointer"
     >
 
       <Avatar user={data} />
-      <span className="text-xl">{data.name}</span>
+      <div className="flex flex-col">
+        <span className="text-sm font-medium text-slate-800">{data.name || data.username}</span>
+        <span className="text-xs text-slate-500">@{data.username}</span>
+      </div>
     </div>
   );
 };

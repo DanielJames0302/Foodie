@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
+import { getAxiosErrorMessage } from "../../utils/error";
 
 const Login = () => {
 
@@ -8,7 +9,7 @@ const Login = () => {
     username: "",
     password: "",
   });
-  const [err, setErr] = useState<String>('');
+  const [err, setErr] = useState<string>("");
   const {login} : any = useContext(AuthContext);
 
   const navigate = useNavigate()
@@ -23,7 +24,7 @@ const Login = () => {
       await login(inputs);
       navigate('/')
     } catch (err: any) {
-      setErr(err.message);
+      setErr(getAxiosErrorMessage(err, "Unable to login. Please try again."));
     }
   };
 

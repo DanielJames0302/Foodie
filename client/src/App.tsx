@@ -7,11 +7,13 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
-      <>
-        <Navbar />
+    <div className="flex flex-col h-screen overflow-hidden">
+      <Navbar />
+      <div className="flex-1 overflow-hidden">
         <Outlet />
-        <ToastContainer/>
-      </>
+      </div>
+      <ToastContainer />
+    </div>
   );
 }
 

@@ -23,6 +23,9 @@ const Post = ({ post }: any) => {
 
   const { currentUser }: any = useContext(AuthContext);
 
+  // Debug: Log the post data to see what we're receiving
+  console.log('Post data:', post);
+
   const { isLoading, data } = useQuery<any, Error, User[]>({
     queryKey: ["likes", post.ID],
     queryFn: () =>
@@ -67,19 +70,27 @@ const Post = ({ post }: any) => {
       <div className="p-[20px]">
         <div className="flex item-center justify-between relative ">
           <div className="flex gap-[20px]">
-            <img className="w-[40px] h-[40px] rounded-full object-contain" src={"/uploads/" + post.User.profilePic} alt="" />
+            <img 
+              className="w-[40px] h-[40px] rounded-full object-cover" 
+              src={
+                post.User?.profilePic || post.profile_pic
+                  ? "/uploads/" + (post.User?.profilePic || post.profile_pic)
+                  : "/images/default-user.jpg"
+              } 
+              alt="User avatar" 
+            />
             <div className="details flex flex-col ">
               <Link
                 to={`/profile/${post.user_id}`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
-                <span className="font-bold">{post.User.username}</span>
+                <span className="font-bold">{post.User?.username || post.User?.name || post.username || post.name || 'Unknown User'}</span>
               </Link>
               <span className="text-sm">{moment(post.CreatedAt).fromNow()}</span>
             </div>
           </div>
           <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
-          {menuOpen && post.userId === currentUser.id && (
+          {menuOpen && post.user_id === currentUser.ID && (
             <button className="absolute top-[30px] right-0 cursor-pointer btn bg-red-400 hover:bg-red-300 text-white p-2" onClick={handleDelete}>delete</button>
           )}
         </div>
@@ -104,7 +115,7 @@ const Post = ({ post }: any) => {
           {post.imgUrl && <Image
             alt="No image shown"
             cloudName="dgkyhspuf"
-            publicId={`https://res.cloudinary.com/dgkyhspuf/image/upload/${post.imgUrl}.png`}
+            publicId={post.imgUrl}
           />}
         </div>
         <div className="flex items-center gap-5 mt-2">

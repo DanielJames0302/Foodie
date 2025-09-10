@@ -7,9 +7,9 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   return (
-  <div className="sidebar flex p-[5px] h-[calc(100vh - 70px)]">
+  <div className="flex flex-row h-full w-full overflow-hidden">
     <DesktopSidebar/>
-    <div className="flex-[8] mobile:p-[10px] tablet:p-[20px]">
+    <div className="flex-[8] h-full w-full mobile:p-[10px] tablet:p-[20px]">
       {children}
     </div>
 

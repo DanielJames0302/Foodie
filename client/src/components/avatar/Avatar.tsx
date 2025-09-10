@@ -25,7 +25,7 @@ const Avatar: React.FC<AvatarProps> = ({ user }) => {
       ">
     
          <img
-              className="fill"
+              className="w-full h-full object-cover"
               src={
                 user?.profilePic
                   ? "/uploads/" + user?.profilePic

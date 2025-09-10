@@ -85,21 +85,27 @@ const Profile = () => {
 
 
   return (
-    <div className="bg-black-200">
+    <div className="h-full overflow-y-auto bg-gray-100">
       {isLoading ? (
-        "loading"
+        <div className="flex items-center justify-center h-full">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        </div>
       ) : (
         <>
           <div className="w-full h-[300px] relative mb-2">
-            <img
-              src={
-                data?.coverPic
-                  ? "/uploads/" + data?.coverPic
-                  : "/images/default-cover.png"
-              }
-              alt=""
-              className="cover w-full h-full object-contain"
-            />
+            {data?.coverPic ? (
+              <img
+                src={"/uploads/" + data.coverPic}
+                alt="Cover"
+                className="cover w-full h-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400">
+                <span className="rounded bg-white/30 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
+                  No cover photo yet
+                </span>
+              </div>
+            )}
             <img
               src={
                 data?.profilePic
@@ -107,21 +113,21 @@ const Profile = () => {
                   : "/images/default-user.jpg"
               }
               alt=""
-              className="profilePic w-[200px] h-[200px] rounded-xl object-cover absolute left-0 right-0 m-auto top-[200px]"
+              className="profilePic w-[160px] h-[160px] rounded-xl object-cover absolute left-0 right-0 m-auto -bottom-16 shadow-lg"
             />
           </div>
-          <div className="px-5 py-5 mobile:p-5 tablet:p-8">
-            <div className="h-[180px] shadow-xl p-[50px] flex flex-row items-center justify-between mb-[20px] mobile:flex mobile:flex-col mobile:h-[30vh] mobile:p-5 mobile:mt-24">
+          <div className="px-5 pt-20 pb-5 mobile:p-5 tablet:p-8">
+            <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-row items-center justify-between mb-[20px] mobile:flex mobile:flex-col mobile:gap-4">
               <div className="flex-1 flex flex-row gap-2 tablet:flex-wrap">
-                <div className="info">
+                {data?.city &&  <div className="info">
                   <div className="item">
                     <PlaceIcon />
                     <span>{data?.city}</span>
                   </div>
-                </div>
+                </div>}
               </div>
               <div className="flex-1 flex flex-col items-center gap-2">
-                <span className="text-xl font-bold">{data?.name}</span>
+                <span className="text-xl font-bold text-slate-800">{data?.name}</span>
 
                 {rIsLoading || requestIsLoading || sentRequestIsLoading ? (
                   "loading"
@@ -130,10 +136,10 @@ const Profile = () => {
               </div>
               {userId !== currentUser.ID ? <div className="flex-1 flex items-center justify-end gap-2" onClick={hanldeClick}>
                 <EmailOutlinedIcon />
-              </div>: <div className="flex-1 flex items-center justify-end gap-2"><MoreVertIcon/> </div>}
+              </div>: <div className="flex-1 flex items-center justify-end gap-2"> </div>}
             </div>
             <div className="flex items-center justify-center">
-              <div className="w-2/4">
+              <div className="w-full max-w-2xl">
               <Posts userId={userId} />  
               </div>
               

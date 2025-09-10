@@ -11,44 +11,120 @@ import (
 	"gorm.io/gorm"
 )
 
+type PostResponse struct {
+	models.Posts
+	UserID       uint   `json:"user_id"`
+	Username     string `json:"username"`
+	Name         string `json:"name"`
+	ProfilePic   string `json:"profile_pic"`
+	Email        string `json:"email"`
+	City         string `json:"city"`
+	Website      string `json:"website"`
+	User         models.Users `json:"User"`
+}
+
 
 
 func GetPost(context *fiber.Ctx, db *gorm.DB) error {
-	currentUserID := context.Locals("userId")
 	userId := context.Query("userId")
+	pageStr := context.Query("page", "1")
+	limitStr := context.Query("limit", "10")
 
-	results := []models.Posts{};
-	fields := `users.id AS user_id,
-						 users.profile_pic AS user_profile_pic,
-						 users.name AS user_name,
-						 posts.*`
+	// Parse pagination parameters
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit < 1 || limit > 50 {
+		limit = 10
+	}
+
+	offset := (page - 1) * limit
+
+	results := []PostResponse{};
+	fields := `posts.*,
+						 users.id AS user_id,
+						 users.username,
+						 users.name,
+						 users.profile_pic,
+						 users.email,
+						 users.city,
+						 users.website`
+	
+	var totalCount int64
+	var query *gorm.DB
+
 	if userId != "" {
-		err := db.Model(&models.Posts{}).Select(fields).
-					Joins("INNER JOIN users ON posts.user_id = users.id").
-					Where("posts.user_id = ?", userId).
-					Order("posts.created_at desc").Preload("User").
-					Find(&results).Error
-		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return context.Status(http.StatusOK).JSON(results)
-			}
-			return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "Unable to load posts"})
-		}
+		// Count total posts for this user
+		db.Model(&models.Posts{}).Where("posts.user_id = ?", userId).Count(&totalCount)
+		
+		query = db.Model(&models.Posts{}).Select(fields).
+			Joins("INNER JOIN users ON posts.user_id = users.id").
+			Where("posts.user_id = ?", userId).
+			Order("posts.created_at desc").
+			Offset(offset).
+			Limit(limit)
 	} else {
-		err := db.Model(&models.Posts{}).Select(fields).
-		Joins("JOIN users ON users.id = posts.user_id").
-		Joins("LEFT JOIN relationships ON posts.user_id = relationships.followed_user_id").
-		Where("posts.user_id = ?", currentUserID).Or("relationships.follower_user_id = ?", currentUserID).
-		Order("posts.created_at desc").Preload("User").
-		Find(&results).Error
-		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return context.Status(http.StatusOK).JSON(results)
-			}
-			return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "Unable to load posts"})
+		uid := context.Locals("userId").(uint)
+		subQuery := db.Model(&models.Relationships{}).Select("friend_profile_id").Where("my_profile_id = ?", uid)
+		
+		// Count total posts for user and friends
+		db.Model(&models.Posts{}).
+			Joins("JOIN users ON users.id = posts.user_id").
+			Where("posts.user_id = ? OR posts.user_id IN (?)", uid, subQuery).
+			Count(&totalCount)
+		
+		query = db.Model(&models.Posts{}).Select(fields).
+			Joins("JOIN users ON users.id = posts.user_id").
+			Where("posts.user_id = ? OR posts.user_id IN (?)", uid, subQuery).
+			Order("posts.created_at desc").
+			Offset(offset).
+			Limit(limit)
+	}
+
+	err = query.Find(&results).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return context.Status(http.StatusOK).JSON(fiber.Map{
+				"posts": results,
+				"pagination": fiber.Map{
+					"page": page,
+					"limit": limit,
+					"total": totalCount,
+					"totalPages": (totalCount + int64(limit) - 1) / int64(limit),
+					"hasNext": page < int((totalCount + int64(limit) - 1) / int64(limit)),
+					"hasPrev": page > 1,
+				},
+			})
+		}
+		return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "Unable to load posts"})
+	}
+
+	// Populate the User object for each result
+	for i := range results {
+		results[i].User = models.Users{
+			Model:      gorm.Model{ID: results[i].UserID},
+			Username:   results[i].Username,
+			Name:       results[i].Name,
+			ProfilePic: results[i].ProfilePic,
+			Email:      results[i].Email,
+			City:       results[i].City,
+			Website:    results[i].Website,
 		}
 	}
-	return context.Status(http.StatusOK).JSON(results)
+
+	return context.Status(http.StatusOK).JSON(fiber.Map{
+		"posts": results,
+		"pagination": fiber.Map{
+			"page": page,
+			"limit": limit,
+			"total": totalCount,
+			"totalPages": (totalCount + int64(limit) - 1) / int64(limit),
+			"hasNext": page < int((totalCount + int64(limit) - 1) / int64(limit)),
+			"hasPrev": page > 1,
+		},
+	})
 }
 
 func GetPostById (context *fiber.Ctx, db *gorm.DB) error {
@@ -69,8 +145,14 @@ func GetFoodPost(context *fiber.Ctx, db *gorm.DB) error {
 	foodFilter := context.Query("filter");
 
 	results := []models.Posts{}
+	var err error
 
-	err := db.Model(&models.Posts{}).Where("category = ?", foodFilter).Find(&results).Error;
+	// If no filter is provided, return all posts
+	if foodFilter == "" {
+		err = db.Model(&models.Posts{}).Find(&results).Error;
+	} else {
+		err = db.Model(&models.Posts{}).Where("category = ?", foodFilter).Find(&results).Error;
+	}
 
 	if err != nil {
 		if (errors.Is(err, gorm.ErrRecordNotFound)) {

@@ -81,31 +81,30 @@ func Login(context *fiber.Ctx, db *gorm.DB) error {
 
 func Register(context *fiber.Ctx, db *gorm.DB) error {
 	user := models.Users{}
-	userModel := &[]models.Users{}
+	existing := models.Users{}
 
-	err := context.BodyParser(&user)
-	if (err != nil) {
-		context.Status(http.StatusUnprocessableEntity).JSON(&fiber.Map{"message": "Request failed"})
-		return err
+	if err := context.BodyParser(&user); err != nil {
+		return context.Status(http.StatusUnprocessableEntity).JSON(&fiber.Map{"message": "Request failed"})
 	}
 
-
-	err = db.Where("username = ?", user.Username).First(userModel).Error
-
-	if (err != nil) {
-		bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
-		if err != nil {
-			return err
-		}
-		user.Password = string(bytes)
-		err = db.Select("username","password","email","name").Create(&user).Error
-		if err != nil {
-			return context.Status(http.StatusBadRequest).JSON(&fiber.Map{"message" : "Cannot create user"})	
-		}
-	} else {
+	// Check if a user with the same username already exists
+	if err := db.Where("username = ?", user.Username).First(&existing).Error; err == nil {
 		return context.Status(http.StatusBadRequest).JSON(&fiber.Map{"message": "User has already existed"})
-		
+	} else if err != gorm.ErrRecordNotFound {
+		return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "Unable to check existing users"})
 	}
+
+	// Hash password and create the new user
+	bytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+	if hashErr != nil {
+		return context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "Unable to process password"})
+	}
+	user.Password = string(bytes)
+
+	if err := db.Select("username","password","email","name").Create(&user).Error; err != nil {
+		return context.Status(http.StatusBadRequest).JSON(&fiber.Map{"message" : "Cannot create user"})
+	}
+
 	return context.Status(http.StatusOK).JSON(&fiber.Map{"message": "User is created successfully"})
 }
 

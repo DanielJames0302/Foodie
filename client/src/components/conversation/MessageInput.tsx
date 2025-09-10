@@ -28,12 +28,13 @@ const MessageInput:React.FC<MessageInputProps> = ({
         className="
         text-black
         font-light
-        py-2
-        px-4
+        py-1.5
+        px-3
         bg-neutral-100 
         w-full 
         rounded-full
         focus:outline-none
+        text-sm
       "
         
       />

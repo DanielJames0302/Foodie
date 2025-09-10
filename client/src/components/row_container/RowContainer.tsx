@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { MdAdsClick } from "react-icons/md";
+import { useEffect, useRef, useState } from "react";
+import { MdAdsClick, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { motion } from "framer-motion";
 import { Image } from "cloudinary-react";
 import { Link } from "react-router-dom";
@@ -9,68 +9,160 @@ interface RowContainerProps {
   flag: boolean;
   data: any;
   scrollValue: any;
+  viewMode?: "grid" | "list";
 }
 
 const RowContainer: React.FC<RowContainerProps> = ({
   flag,
   data,
   scrollValue,
+  viewMode = "grid",
 }) => {
   const rowContainer = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   useEffect(() => {
-    rowContainer.current.scrollLeft += scrollValue;
+    if (rowContainer.current) {
+      rowContainer.current.scrollLeft += scrollValue;
+    }
   }, [scrollValue]);
+
+  // Check scroll position to enable/disable arrows
+  const checkScrollPosition = () => {
+    if (rowContainer.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = rowContainer.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+    }
+  };
+
+  // Scroll functions
+  const scrollLeft = () => {
+    if (rowContainer.current) {
+      rowContainer.current.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (rowContainer.current) {
+      rowContainer.current.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  };
+
+  // Check scroll position on mount and when data changes
+  useEffect(() => {
+    checkScrollPosition();
+    const container = rowContainer.current;
+    if (container) {
+      container.addEventListener('scroll', checkScrollPosition);
+      return () => container.removeEventListener('scroll', checkScrollPosition);
+    }
+  }, [data]);
   return (
-    <div
-      ref={rowContainer}
-      className={`w-full flex items-center gap-3  my-12 scroll-smooth  ${
-        flag
-          ? "overflow-x-scroll scrollbar-none"
-          : "overflow-x-hidden flex-wrap justify-center"
-      }`}
-    >
+    <div className="relative w-full my-12">
+
+      {flag && canScrollLeft && (
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={scrollLeft}
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:shadow-xl transition-all duration-200"
+        >
+          <MdChevronLeft className="text-2xl text-gray-600" />
+        </motion.button>
+      )}
+
+  
+      {flag && canScrollRight && (
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={scrollRight}
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:shadow-xl transition-all duration-200"
+        >
+          <MdChevronRight className="text-2xl text-gray-600" />
+        </motion.button>
+      )}
+
+      <div
+        ref={rowContainer}
+        className={`w-full scroll-smooth ${
+          flag
+            ? "flex items-center gap-3 overflow-x-scroll scrollbar-none"
+            : viewMode === "grid"
+            ? "flex items-center gap-6 overflow-x-hidden flex-wrap justify-center"
+            : "flex flex-col gap-4"
+        }`}
+      >
       {data && data.length > 0 ? (
         data.map((item: any) => (
-          <div
+          <motion.div
             key={item?.ID}
-            className="w-275 h-[175px] min-w-[275px] md:w-300 md:min-w-[300px]  bg-cardOverlay rounded-lg py-2 px-4  my-12 backdrop-blur-lg hover:drop-shadow-lg flex flex-col items-center justify-evenly relative"
+            whileHover={{ scale: 1.02 }}
+            className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${
+              viewMode === "grid"
+                ? "w-275 h-[280px] min-w-[275px] md:w-300 md:min-w-[300px] flex flex-col items-center justify-between p-4 relative"
+                : "w-full flex flex-row items-center p-4 h-32"
+            }`}
           >
-            <div className="w-full flex items-center justify-between">
+         
+            <div className={`${viewMode === "grid" ? "w-full flex justify-center" : "w-24 h-24 flex-shrink-0"}`}>
               <motion.div
-                className="w-40 h-40 -mt-8 drop-shadow-2xl"
-                whileHover={{ scale: 1.2 }}
+                className={`${viewMode === "grid" ? "w-32 h-32" : "w-24 h-24"} rounded-lg overflow-hidden`}
+                whileHover={{ scale: 1.05 }}
               >
                 {item.imgUrl ? 
                   <Image
-                    className="h-[120px] w-[120px]"
-                    alt="No image shown"
+                    className={`${viewMode === "grid" ? "w-32 h-32" : "w-24 h-24"} object-cover`}
+                    alt="Dish image"
                     cloudName="dgkyhspuf"
-                    publicId={`https://res.cloudinary.com/dgkyhspuf/image/upload/${item.imgUrl}.png`}
+                    publicId={item.imgUrl}
                   /> :
-                  <img className= "h-[120px] w-[120px]" src={'/images/default-food-not-found.jpg'} alt="not found" />
+                  <img 
+                    className={`${viewMode === "grid" ? "w-32 h-32" : "w-24 h-24"} object-cover`} 
+                    src={'/images/default-food-not-found.jpg'} 
+                    alt="Dish not found" 
+                  />
                 }
-              </motion.div>
-              <motion.div
-                whileTap={{ scale: 0.75 }}
-                className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center cursor-pointer hover:shadow-md -mt-8"
-              >
-                <Link to={'/post/' + item?.ID}>
-                <MdAdsClick className="text-white" />
-                </Link>
-             
               </motion.div>
             </div>
 
-            <div className="w-full flex flex-col items-end justify-end -mt-6">
-              <p className="text-black font-semibold text-base md:text-lg">
-                {item?.title}
-              </p>
-              <p className="mt-1 text-sm text-gray-500">
-                {item?.calories} Calories
-              </p>
+          
+            <div className={`${viewMode === "grid" ? "w-full text-center" : "flex-1 ml-4"} flex flex-col justify-between`}>
+              <div>
+                <h3 className={`${viewMode === "grid" ? "text-lg" : "text-xl"} font-bold text-gray-800 mb-1`}>
+                  {item?.title}
+                </h3>
+                {item?.Desc && (
+                  <p className={`${viewMode === "grid" ? "text-sm" : "text-base"} text-gray-600 mb-2 line-clamp-2`}>
+                    {item.desc}
+                  </p>
+                )}
+                <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    {item?.calories || 0} Calories
+                  </span>
+                  {item?.category && (
+                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
+                      {item.category}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
+
+      
+            <motion.div
+              whileTap={{ scale: 0.95 }}
+              className={`${viewMode === "grid" ? "absolute top-4 right-4" : "ml-4"} w-10 h-10 rounded-full bg-green-500 flex items-center justify-center cursor-pointer hover:bg-green-600 transition-colors shadow-lg`}
+            >
+              <Link to={'/post/' + item?.ID}>
+                <MdAdsClick className="text-white text-lg" />
+              </Link>
+            </motion.div>
+          </motion.div>
         ))
       ) : (
         <div className="w-full flex flex-col items-center justify-center">
@@ -80,6 +172,7 @@ const RowContainer: React.FC<RowContainerProps> = ({
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 };

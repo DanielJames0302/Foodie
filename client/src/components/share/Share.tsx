@@ -63,6 +63,7 @@ const Share = () => {
         [name]: name === 'calories'? Number(value) : value,
       };
     });
+    if (error) setError("");
   }, [])
 
   const handleSubmit = useCallback( async (
@@ -85,99 +86,109 @@ const Share = () => {
   }, [file, mutation, postData])
 
   return (
-    <div className="h-full p-2 flex justify-center">
-      <div className="flex flex-col items-center justify-center p-2 w-2/4 bg-green-100 rounded-md gap-3 h-auto">
-        <div className="flex-2 w-3/4">
-          <h3 className="text-black text-xl mb-2">Share your thoughts</h3>
-          <div className="flex flex-col gap-2">
-            <p>Post type</p>
-            <select
-              className="bg-gray-50 border border-gray-300 focus:outline-blue-500 rounded-md p-2.5"
-              name="type"
-              onChange={handleInputChange}
-            >
-              <option value="">Post type</option>
-              <option value="Review">Review</option>
-              <option value="Recipe">Recipe</option>
-            </select>
-
-            <div className="flex flex-col">
-              <p>Title</p>
+    <div className="h-full p-4 flex justify-center">
+      <div className="w-full max-w-2xl rounded-lg border bg-white p-4 shadow-sm">
+        <h3 className="mb-4 text-lg font-semibold text-slate-800">Share your thoughts</h3>
+        <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="sm:col-span-1">
+              <label className="mb-1 block text-xs font-medium text-slate-600">Post type</label>
+              <select
+                className="w-full rounded-md border border-slate-300 bg-slate-50 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                name="type"
+                value={postData.type}
+                onChange={handleInputChange}
+              >
+                <option value="">Select type</option>
+                <option value="Review">Review</option>
+                <option value="Recipe">Recipe</option>
+              </select>
+            </div>
+            <div className="sm:col-span-2">
+              <label className="mb-1 block text-xs font-medium text-slate-600">Title</label>
               <input
-                className="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring focus:border focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="w-full rounded-md border border-slate-300 bg-slate-50 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                 type="text"
+                placeholder="Give your post a title"
                 value={postData.title}
                 name="title"
                 onChange={handleInputChange}
               />
             </div>
-
-            <div className="flex flex-col h-36">
-              <p>Decription</p>
-              <textarea className="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring focus:border focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" name="desc" value={postData.desc} onChange={handleInputChange}></textarea>
-            </div>
-            {postData.type === "Recipe" && (
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <p>Category</p>
-                  <select
-                    value={postData.category}
-                    onChange={handleInputChange}
-                    className="h-10 mt-2 rounded-md focus:outline-green-300"
-                    name="category"
-                  >
-                    <option value="">Category</option>
-                    {categories.map((category) => (
-                      <option value={`${category.name}`}>{category.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col">
-                  <p>Calories</p>
-                  <input
-                    className="h-10 mt-2 rounded-md focus:ring focus:ring-green-300 focus:outline-none ps-2 "
-                    type="number"
-                    value={postData.calories}
-                    name="calories"
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-            )}
           </div>
-        </div>
-        <hr />
-        <div className="flex flex-col justify-between">
-          <div className="flex flex-col items-center justify-between gap-3">
-            {file && (
-              <img
-                className="h-20 w-20"
-                src={URL.createObjectURL(file)}
-                alt=""
-              />
-            )}
-            <input
-              type="file"
-              id="file"
-              style={{ display: "none" }}
-              onChange={selectFile}
+
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-600">Description</label>
+            <textarea
+              className="h-28 w-full rounded-md border border-slate-300 bg-slate-50 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+              name="desc"
+              placeholder="Share details..."
+              value={postData.desc}
+              onChange={handleInputChange}
             />
-            <label htmlFor="file">
-              <div className="flex flex-col items-center">
-                <img src={Image} alt="" />
-                <strong>Add Image</strong>
-              </div>
-            </label>
-
-            <p className="text-red-400">{error}</p>
           </div>
-          <button
-            type="submit"
-            className="btn font-bold bg-blue-100 hover:bg-blue-50 text-blue-400 p-2 round-md"
-            onClick={handleSubmit}
-          >
-            Share
-          </button>
+
+          {postData.type === "Recipe" && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-medium text-slate-600">Category</label>
+                <select
+                  value={postData.category}
+                  onChange={handleInputChange}
+                  className="w-full rounded-md border border-slate-300 bg-slate-50 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                  name="category"
+                >
+                  <option value="">Select category</option>
+                  {categories.map((category) => (
+                    <option value={`${category.name}`}>{category.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-slate-600">Calories</label>
+                <input
+                  className="w-full rounded-md border border-slate-300 bg-slate-50 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                  type="number"
+                  placeholder="e.g. 250"
+                  value={postData.calories}
+                  name="calories"
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label className="mb-2 block text-xs font-medium text-slate-600">Image</label>
+            <div className="rounded-md border-2 border-dashed border-slate-300 p-4 text-center hover:border-slate-400">
+              {file ? (
+                <div className="flex flex-col items-center gap-2">
+                  <img className="h-32 w-32 rounded-md object-cover" src={URL.createObjectURL(file)} alt="preview" />
+                  <span className="text-xs text-slate-500">{file.name}</span>
+                </div>
+              ) : (
+                <label htmlFor="file" className="mx-auto flex cursor-pointer flex-col items-center gap-1 text-slate-500">
+                  <img src={Image} alt="" />
+                  <strong className="text-sm">Add Image</strong>
+                  <span className="text-xs">PNG, JPG, GIF up to 5MB</span>
+                </label>
+              )}
+              <input type="file" id="file" accept="image/*" style={{ display: "none" }} onChange={selectFile} />
+            </div>
+          </div>
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={mutation.isPending}
+              className="inline-flex items-center rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={handleSubmit}
+            >
+              {mutation.isPending ? 'Sharing...' : 'Share'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

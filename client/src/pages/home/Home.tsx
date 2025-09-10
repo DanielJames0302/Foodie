@@ -8,15 +8,27 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
+
+  if (!currentUser) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="px-[20px] py-[70px] bg-gray-100 min-h-screen mobile:p-[10px] tablet:p-[20px]">
-      <div className="flex flex-row gap-2">
-        <LeftBar />
-        <div className="flex-[6]">
+    <div className="h-full bg-gray-100">
+      <div className="flex h-full gap-2">
+        <div className="flex-[2] sticky h-full">
+          <LeftBar />
+        </div>
+
+        <div className="flex-[6] overflow-y-auto h-full">
           <div className="flex justify-center">
             <Link to={"/share"}>
-              <button className="btn bg-green-500 hover:bg-green-400 flex flex-row gap-3 mb-2 p-2">
-                <div className="p-2">
+              <div className="mb-3 w-full max-w-2xl cursor-pointer rounded-lg border bg-white p-3 shadow-sm transition hover:shadow-md">
+                <div className="flex items-center gap-3">
                   <img
                     src={
                       currentUser.profilePic
@@ -24,24 +36,32 @@ const Home = () => {
                         : `/images/default-user.jpg`
                     }
                     alt=""
-                    className="h-8 w-8 object-cover"
+                    className="h-10 w-10 rounded-full object-cover"
                   />
+                  <div className="flex-1">
+                    <div className="text-sm text-slate-500">
+                      Do you have a new recipe in your mind{" "}
+                      <span className="font-semibold text-slate-700">
+                        {currentUser.name}
+                      </span>
+                      ?
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center rounded-full bg-green-500 p-2 text-white">
+                    <IoNavigateCircleOutline className="h-6 w-6" />
+                  </div>
                 </div>
-
-                <div className="text-white font-light flex items-center justify-center p-2 text-lg">
-                  Do you have a new recipe in your mind{" "}
-                  <strong>{currentUser.name}</strong>?
-                </div>
-                <div className="p-2">
-                  <IoNavigateCircleOutline className="text-white h-8 w-8" />
-                </div>
-              </button>
+              </div>
             </Link>
           </div>
 
           <Posts userId={null} />
         </div>
-        <RightBar />
+
+        {/* Right Sidebar (sticky) */}
+        <div className="flex-[2] sticky h-full">
+          <RightBar />
+        </div>
       </div>
     </div>
   );

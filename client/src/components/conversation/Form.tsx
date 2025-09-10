@@ -30,17 +30,17 @@ const Form = () => {
 
 
   return (
-    <div className="py-4 
-        px-4 
+    <div className="py-2 
+        px-3 
         bg-white 
         border-t 
         flex 
         items-center 
         gap-2 
-        lg:gap-4 
-        w-full">
-      <HiPhoto size={30} className="text-sky-500" />
-      <form className="flex items-center gap-2 lg:gap-4 w-full" onSubmit={handleSubmit(onSubmit)} action="">
+        w-full
+        flex-shrink-0">
+      <HiPhoto size={24} className="text-sky-500 flex-shrink-0" />
+      <form className="flex items-center gap-2 w-full" onSubmit={handleSubmit(onSubmit)} action="">
         <MessageInput
           id="message"
           register={register}
@@ -56,8 +56,9 @@ const Form = () => {
             cursor-pointer 
             hover:bg-sky-600 
             transition
+            flex-shrink-0
           ">
-          <HiPaperAirplane size={18} className="text-white" />
+          <HiPaperAirplane size={16} className="text-white" />
         </button>
       </form>
     </div>
