@@ -132,3 +132,4 @@ You can modify the `seed.go` file to:
 ## Security Note
 
 ⚠️ **Important**: The sample data includes plain text passwords that are hashed before storage. In production, always use strong, unique passwords and proper password policies.
+

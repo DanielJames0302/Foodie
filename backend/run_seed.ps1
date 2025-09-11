@@ -24,3 +24,4 @@ if ($LASTEXITCODE -eq 0) {
 } else {
     Write-Host "Database seeding failed!" -ForegroundColor Red
 }
+

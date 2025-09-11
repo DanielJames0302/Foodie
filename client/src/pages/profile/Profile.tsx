@@ -1,6 +1,5 @@
 import PlaceIcon from "@mui/icons-material/Place";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";

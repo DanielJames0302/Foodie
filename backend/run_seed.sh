@@ -20,3 +20,4 @@ fi
 go run seed.go
 
 echo "Database seeding completed!"
+
