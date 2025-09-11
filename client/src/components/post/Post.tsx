@@ -115,7 +115,7 @@ const Post = ({ post }: any) => {
           {post.imgUrl && <Image
             alt="No image shown"
             cloudName="dgkyhspuf"
-            publicId={`https://res.cloudinary.com/dgkyhspuf/image/upload/${post.imgUrl}.png`}
+            publicId={`https://res.cloudinary.com/dgkyhspuf/image/upload/${post.imgUrl}`}
           />}
         </div>
         <div className="flex items-center gap-5 mt-2">
